@@ -1,0 +1,51 @@
+@CHARSET "UTF-8";
+
+.body {
+	margin: 0;
+	text-align: center;
+}
+
+.div_content {
+	margin: 0 auto;
+	width: 80%;
+	height: 100%;
+	border: 1px solid #FFF;
+}
+
+.div_login {
+	float: left;
+	position: relative;
+	left: 0px;
+	top: 0px;
+	width: 50%;
+	height: 80%;
+	border: 1px solid #FFF;
+}
+
+.div_notice {
+	float: right;
+	position: relative;
+	right: 0px;
+	top: 0px;
+	width: 50%;
+	height: 80%;
+	border: 1px solid #FFF;
+}
+
+.div_notice_detail {
+	text-align: left;
+	border: 1px solid #FFF;
+	margin: 0 auto;
+	margin-top: 12%;
+	width: 300px;
+	height: 40px;
+}
+
+.div_foot {
+	margin: 0 auto;
+	margin-bottom: 0;
+	margin-top: 38%;
+	width: 80%;
+	height: 100%;
+	border: 1px solid #FFF;
+}

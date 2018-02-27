@@ -1,0 +1,270 @@
+package com.licj.viewworldweb.model.table;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import com.licj.viewworldweb.model.User;
+import com.licj.viewworldweb.utils.*;
+
+public class UserTable extends BaseDAO {
+	public final static String TABLE_NAME = "users";
+	public final static String ID_COLUMN = "id";
+	public final static String NAME_COLUMN = "name";
+	public final static String EMAIL_COLUMN = "email";
+	public final static String PASSWORD_COLUMN = "password";
+	public final static String PHONE_COLUMN = "phone";
+	public final static String TAGS_COLUMN = "tags";
+
+	public UserTable() {
+		super();
+	}
+
+	public int getTotal() {
+		int total = 0;
+		try (Connection c = getConnection(); Statement s = c.createStatement();) {
+
+			String sql = "select count(*) from " + TABLE_NAME;
+			L.i("sql->" + sql);
+
+			ResultSet rs = s.executeQuery(sql);
+			while (rs.next()) {
+				total = rs.getInt(1);
+			}
+
+			L.i("total->" + total);
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return total;
+	}
+
+	public User constructUserFromResultSet(ResultSet rs) {
+		try {
+			User user = new User();
+			user.setId(rs.getLong(ID_COLUMN));
+			user.setName(rs.getString(NAME_COLUMN));
+			user.setEmail(rs.getString(EMAIL_COLUMN));
+			user.setPassword(rs.getString(PASSWORD_COLUMN));
+			user.setPhone(rs.getString(PHONE_COLUMN));
+			String tags = rs.getString(TAGS_COLUMN);
+			if (tags != null) {
+				user.setTags(Arrays.asList(tags.split(",")));
+			}
+			return user;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public void add(User user) {
+
+		String sql = "insert into " + TABLE_NAME + " values(?,?,?,?,?,?)";
+		L.i("sql->" + sql);
+		try (Connection c = getConnection(); PreparedStatement ps = c.prepareStatement(sql);) {
+			ps.setLong(1, user.getId());
+			ps.setString(2, user.getName());
+			ps.setString(3, user.getEmail());
+			ps.setString(4, user.getPassword());
+			ps.setString(5, user.getPhone());
+			ps.setString(6, StringUtil.connectString(user.getTags(), ", "));
+			ps.execute();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void delete(long id) {
+		try (Connection c = getConnection(); Statement s = c.createStatement();) {
+
+			String sql = "delete from " + TABLE_NAME + " where " + ID_COLUMN + " = " + id;
+			L.i("sql->" + sql);
+
+			s.execute(sql);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void update(User user) {
+
+		String sql = "update " + TABLE_NAME + " set " + ID_COLUMN + " =?, " + NAME_COLUMN + " =?, " + EMAIL_COLUMN
+				+ " =?, " + PASSWORD_COLUMN + " =?, " + PHONE_COLUMN + " =?, " + TAGS_COLUMN + " =? where " + ID_COLUMN
+				+ " =?";
+		L.i("sql->" + sql);
+		try (Connection c = getConnection(); PreparedStatement ps = c.prepareStatement(sql);) {
+
+			ps.setLong(1, user.getId());
+			ps.setString(2, user.getName());
+			ps.setString(3, user.getEmail());
+			ps.setString(4, user.getPassword());
+			ps.setString(5, user.getPhone());
+			ps.setString(6, StringUtil.connectString(user.getTags(), ", "));
+			ps.setLong(7, user.getId());
+
+			ps.execute();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public User getUserByID(String userID) {
+
+		String sql = "select * from " + TABLE_NAME + " where " + ID_COLUMN + " = " + userID;
+		L.i("sql->" + sql);
+		try (Connection c = getConnection(); PreparedStatement ps = c.prepareStatement(sql);) {
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) {
+				User user = constructUserFromResultSet(rs);
+				return user;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public boolean hasUserByEmail(String email) {
+
+		String sql = "select " + ID_COLUMN + " from " + TABLE_NAME + " where " + EMAIL_COLUMN + " =  '" + email + "'";
+		L.i("sql->" + sql);
+		try (Connection c = getConnection(); PreparedStatement ps = c.prepareStatement(sql);) {
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) {
+				return true;
+			} else {
+				return false;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	public boolean hasUserByPhone(String phone) {
+
+		String sql = "select " + ID_COLUMN + " from " + TABLE_NAME + " where " + PHONE_COLUMN + " =  '" + phone + "'";
+		L.i("sql->" + sql);
+		try (Connection c = getConnection(); PreparedStatement ps = c.prepareStatement(sql);) {
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) {
+				return true;
+			} else {
+				return false;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	public String getPasswordByAccount(String account, boolean isPhone) {
+		String password = "";
+		String sql = "";
+
+		if(isPhone){
+			sql = "select " + PASSWORD_COLUMN + " from " + TABLE_NAME + " where " + PHONE_COLUMN + " =  '" + account + "'";
+		} else {
+			sql = "select " + PASSWORD_COLUMN + " from " + TABLE_NAME + " where " + EMAIL_COLUMN + " =  '" + account + "'";
+		}
+		L.i("sql->" + sql);
+		try (Connection c = getConnection(); PreparedStatement ps = c.prepareStatement(sql);) {
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) {
+				return rs.getString(PASSWORD_COLUMN);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return password;
+	}
+	
+	public String getIDByAccount(String account, boolean isPhone) {
+		String userID = "";
+		String sql = "";
+
+		if(isPhone){
+			sql = "select " + ID_COLUMN + " from " + TABLE_NAME + " where " + PHONE_COLUMN + " =  '" + account + "'";
+		} else {
+			sql = "select " + ID_COLUMN + " from " + TABLE_NAME + " where " + EMAIL_COLUMN + " =  '" + account + "'";
+		}
+		L.i("sql->" + sql);
+		try (Connection c = getConnection(); PreparedStatement ps = c.prepareStatement(sql);) {
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) {
+				return rs.getString(ID_COLUMN);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return userID;
+	}
+
+	public User getUserByEmail(String email) {
+
+		String sql = "select * from " + TABLE_NAME + " where " + EMAIL_COLUMN + " =  '" + email + "'";
+		L.i("sql->" + sql);
+		try (Connection c = getConnection(); PreparedStatement ps = c.prepareStatement(sql);) {
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) {
+				User user = constructUserFromResultSet(rs);
+				return user;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public User getUserByPhone(String phone) {
+
+		String sql = "select * from " + TABLE_NAME + " where " + PHONE_COLUMN + " =  '" + phone + "'";
+		L.i("sql->" + sql);
+		try (Connection c = getConnection(); PreparedStatement ps = c.prepareStatement(sql);) {
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) {
+				User user = constructUserFromResultSet(rs);
+				return user;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public List<User> list() {
+		return list(0, Short.MAX_VALUE);
+	}
+
+	public List<User> list(int start, int count) {
+		List<User> users = new ArrayList<>();
+
+		String sql = "select * from " + TABLE_NAME + " order by " + ID_COLUMN + " asc limit ?,? ";
+
+		try (Connection c = getConnection(); PreparedStatement ps = c.prepareStatement(sql);) {
+
+			ps.setInt(1, start);
+			ps.setInt(2, count);
+
+			ResultSet rs = ps.executeQuery();
+
+			while (rs.next()) {
+				User user = constructUserFromResultSet(rs);
+				if (user != null) {
+					users.add(user);
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return users;
+	}
+
+}

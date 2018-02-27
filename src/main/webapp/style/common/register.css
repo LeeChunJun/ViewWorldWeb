@@ -1,0 +1,107 @@
+@CHARSET "UTF-8";
+
+.body {
+	margin: 0;
+	text-align: center;
+}
+
+.div_content {
+	margin: 0 auto;
+	width: 80%;
+	height: 100%;
+	border: 1px solid #FFF;
+}
+
+.div_register {
+	float: left;
+	position: relative;
+	left: 0px;
+	top: 0px;
+	width: 50%;
+	height: 80%;
+	border: 1px solid #FFF;
+}
+
+.div_notice {
+	float: right;
+	position: relative;
+	right: 0px;
+	top: 0px;
+	width: 50%;
+	height: 80%;
+	border: 1px solid #FFF;
+}
+
+.div_notice_detail {
+	text-align: left;
+	border: 1px solid #FFF;
+	margin: 0 auto;
+	margin-top: 12%;
+	width: 300px;
+	height: 40px;
+}
+
+.div_foot {
+	margin: 0 auto;
+	margin-bottom: 0;
+	margin-top: 38%;
+	width: 80%;
+	height: 100%;
+	border: 1px solid #FFF;
+}
+
+/* 密码强度检测样式 */
+.pwd {
+	width: 40px;
+	height: 20px;
+	line-height: 14px;
+	padding-top: 2px;
+}
+
+.pwd_f {
+	color: #BBBBBB;
+}
+
+.pwd_c {
+	background-color: #F3F3F3;
+	border-top: 1px solid #D0D0D0;
+	border-bottom: 1px solid #D0D0D0;
+	border-left: 1px solid #D0D0D0;
+}
+
+.pwd_Weak_c {
+	background-color: #FF4545;
+	border-top: 1px solid #BB2B2B;
+	border-bottom: 1px solid #BB2B2B;
+	border-left: 1px solid #BB2B2B;
+}
+
+.pwd_Medium_c {
+	background-color: #FFD35E;
+	border-top: 1px solid #E9AE10;
+	border-bottom: 1px solid #E9AE10;
+	border-left: 1px solid #E9AE10;
+}
+
+.pwd_Strong_c {
+	background-color: #3ABB1C;
+	border-top: 1px solid #267A12;
+	border-bottom: 1px solid #267A12;
+	border-left: 1px solid #267A12;
+}
+
+.pwd_c_r {
+	border-right: 1px solid #D0D0D0;
+}
+
+.pwd_Weak_c_r {
+	border-right: 1px solid #BB2B2B;
+}
+
+.pwd_Medium_c_r {
+	border-right: 1px solid #E9AE10;
+}
+
+.pwd_Strong_c_r {
+	border-right: 1px solid #267A12;
+}

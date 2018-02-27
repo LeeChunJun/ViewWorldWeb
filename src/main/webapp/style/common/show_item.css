@@ -1,0 +1,142 @@
+@CHARSET "UTF-8";
+
+.body {
+	margin: 0;
+	text-align: center;
+}
+
+.div_content {
+	margin: 0 auto;
+	width: 75%;
+	height: 100%;
+	border: 0px solid #FFF;
+}
+
+.div_head {
+	margin: 0 auto;
+	margin-top: 10px;
+	width: 100%;
+	height: 20%;
+	border: 0px solid #FFF;
+}
+
+.div_head_left {
+	float: left;
+	position: relative;
+	margin: 0 auto;
+	width: 50%;
+	height: 100%;
+	border: 0px solid #FFF;
+}
+
+.div_head_left ul li {
+	float: left;
+	display: block;
+	font-style: normal;
+	color: white;
+}
+
+.div_head_right {
+	float: right;
+	position: relative;
+	margin: 0 auto;
+	width: 50%;
+	height: 100%;
+	border: 0px solid #FFF;
+}
+
+.div_item {
+	float: left;
+	position: relative;
+	margin: 0 auto;
+	margin-top: 2%;
+	width: 100%;
+	height: 291px;
+	border: 0px solid #FFF;
+}
+
+.div_item_desc {
+	float: left;
+	position: relative;
+	margin: 0;
+	padding-left: 13%;
+	width: 37%;
+	height: 100%;
+	text-align: left;
+	color: white;
+	border: 0px solid #35BFBC;
+	background-color: #35BFBC;
+	/* filter: alpha(opacity = 80); 支持 IE 浏览器
+	-moz-opacity: 0.80; 支持 FireFox 浏览器
+	opacity: 0.80; 支持 Chrome, Opera, Safari 等浏览器 */
+}
+
+.div_item_cover {
+	float: right;
+	position: relative;
+	margin: 0;
+	padding-top: 1%;
+	padding-right: 13%;
+	width: 45%;
+	height: 100%;
+	text-align: right;
+	color: white;
+	border: 0px solid #FFF;
+}
+
+.div_item_cover_detail {
+	float: right;
+	position: relative;
+	margin: 0;
+	padding: 2px;
+	padding-top: 2%;
+	width : 40%;
+	height: 90%;
+	text-align: center;
+	color: white;
+	border: 1px solid #FFF;
+	width: 40%;
+}
+
+.div_item_cover_tag {
+	float: right;
+	position: relative;
+	margin: 0;
+	padding: 6px;
+	margin-right: 4%;
+	width: 50%;
+	height: 90%;
+	text-align: left;
+	color: white;
+	border: 1px solid #FFF;
+}
+
+.div_item_recommender {
+	float: left;
+	position: relative;
+	margin-top: 0;
+	margin-left: 12%;
+	width: 75%;
+	height: 100%;
+	text-align: left;
+	color: white;
+	border: 0px solid #FFF;
+}
+
+.div_recommender_item_list {
+	float: left;
+	position: relative;
+	margin-top: 0;
+	margin-left: 12%;
+	padding-left: 9px; 
+	width : 75%;
+	height: 100%;
+	text-align: center;
+	color: white;
+	border: 0px solid #FFF;
+}
+
+.tag {
+	margin: 2px;
+}
+
