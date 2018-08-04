@@ -13,7 +13,6 @@ import org.apache.mahout.cf.taste.similarity.UserSimilarity;
 
 import com.licj.viewworldweb.recommender.BaseItemRecommender;
 import com.licj.viewworldweb.recommender.BaseUserRecommender;
-import com.licj.viewworldweb.recommender.ItemFileDataModel;
 import com.licj.viewworldweb.recommender.ItemJDBCDataModel;
 import com.licj.viewworldweb.recommender.ItemRecommender;
 
