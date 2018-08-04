@@ -2,6 +2,7 @@ package com.licj.viewworldweb.servlet;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.Logger;
 import org.apache.mahout.cf.taste.common.TasteException;
 import org.apache.mahout.cf.taste.impl.neighborhood.NearestNUserNeighborhood;
 import org.apache.mahout.cf.taste.impl.similarity.LogLikelihoodSimilarity;
@@ -17,6 +18,7 @@ import com.licj.viewworldweb.recommender.ItemJDBCDataModel;
 import com.licj.viewworldweb.recommender.ItemRecommender;
 
 public class RecommenderFactory {
+	private static final Logger LOGGER = Logger.getLogger(RecommenderFactory.class);
 	private HttpServletRequest request;
 
 	public RecommenderFactory(HttpServletRequest request) {
@@ -25,13 +27,13 @@ public class RecommenderFactory {
 
 	public ItemRecommender getItemRecommender(String recommenderClassName) {
 		try {
-			if (recommenderClassName.equals(Parameters.BooleanPrefUser_REC)) {
+			if (recommenderClassName.equals(Parameters.UserBased_REC)) {
 				return getBaseUserRecommender(request);
-			} else if (recommenderClassName.equals(Parameters.BooleanPrefItem_REC)) {
+			} else if (recommenderClassName.equals(Parameters.ItemBased_REC)) {
 				return getBaseItemRecommender(request);
 			}
 		} catch (TasteException e) {
-			e.printStackTrace();
+			LOGGER.error("getItemRecommender() error!", e);
 		}
 		return null;
 	}
@@ -62,8 +64,8 @@ public class RecommenderFactory {
 
 	@SuppressWarnings("unused")
 	public ItemRecommender getBaseItemRecommender(HttpServletRequest request) throws TasteException {
-//		DataModel dataModel = new ItemJDBCDataModel().getDataModel();
-		DataModel dataModel = new ItemFileDataModel().getDataModel();
+		DataModel dataModel = new ItemJDBCDataModel().getDataModel();
+//		DataModel dataModel = new ItemFileDataModel().getDataModel();
 		ItemSimilarity similarity = null;
 		ItemRecommender recommender = null;
 

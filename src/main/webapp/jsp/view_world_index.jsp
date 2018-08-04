@@ -1,7 +1,8 @@
 <%@page import="com.licj.viewworldweb.model.table.UserTable"%>
 <%@page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@page isELIgnored="false"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -66,8 +67,7 @@
 				<thead>
 					<tr>
 						<th style="text-align: center;">ID</th>
-						<th style="text-align: center;">歌曲名</th>
-						<th style="text-align: center;">歌手名</th>
+						<th style="text-align: center;">名称</th>
 						<th style="text-align: center;">发布时间</th>
 						<th style="text-align: center;">标签</th>
 						<th style="text-align: center;">操作</th>
@@ -78,8 +78,7 @@
 					<c:forEach items="${items}" var="item" varStatus="st">
 						<tr>
 							<td>${item.id}</td>
-							<td>${item.song_name}</td>
-							<td>${item.singer_name}</td>
+							<td>${item.name}</td>
 							<td>${item.publish_time}</td>
 							<td>${item.tags}</td>
 							<td><a

@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
 import org.apache.mahout.cf.taste.common.TasteException;
 import org.apache.mahout.cf.taste.eval.IRStatistics;
 import org.apache.mahout.cf.taste.eval.RecommenderBuilder;
@@ -32,10 +33,11 @@ import com.licj.viewworldweb.recommender.ItemRecommender;
  */
 @WebServlet("/RecommenderServlet")
 public class RecommenderServlet extends HttpServlet {
+	private static final Logger LOGGER = Logger.getLogger(RecommenderServlet.class);
 	private static final long serialVersionUID = 1L;
 
 	private static final int DEFAULT_HOW_MANY = 10;
-	private static final String DEFAULT_RECOMMENDER = Parameters.BooleanPrefItem_REC;
+	private static final String DEFAULT_RECOMMENDER = Parameters.UserBased_REC;
 
 	private ItemRecommender recommender;
 	private RecommenderFactory recommenderFactory;
@@ -140,7 +142,7 @@ public class RecommenderServlet extends HttpServlet {
 
 				if(!new RateTable().hasRatedByUserID(String.valueOf(userID))){
 					/* 最相似项目 */
-					items = recommender.mostSimilarItems(itemID, howMany);
+					items = recommender.mostHotItems(itemID, howMany);
 				} else {
 					/* 推荐项目 */
 					items = recommender.recommend(userID, howMany);
@@ -167,11 +169,6 @@ public class RecommenderServlet extends HttpServlet {
 			
 			RecommendItemList itemList = new RecommendItemList(items);
 			
-			for (RecommendedItem recommendation : items) {
-				System.out.println(recommendation);
-			}
-			System.out.println(itemList.toJSON());
-			
 			if ("text".equals(format)) {
 				writePlainText(response, userID, items, itemList);
 			} else if ("xml".equals(format)) {
@@ -182,8 +179,10 @@ public class RecommenderServlet extends HttpServlet {
 				throw new ServletException("Bad format parameter: " + format);
 			}
 		} catch (TasteException te) {
+			LOGGER.error("doGet() error!", te);
 			throw new ServletException(te);
 		} catch (IOException ioe) {
+			LOGGER.error("doGet() error!", ioe);
 			throw new ServletException(ioe);
 		}
 
@@ -197,6 +196,20 @@ public class RecommenderServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		doGet(request, response);
+	}
+
+	private static void writeJSON(HttpServletResponse response, RecommendItemList itemList, double aadScore, double emsScore, double precision, double recall) throws IOException {
+		response.setContentType("application/json");
+		response.setCharacterEncoding("UTF-8");
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter writer = response.getWriter();
+		String result = "{\"sum\":" + itemList.getTotalSum() + ",\"items\":";
+		result = result + itemList.toJSON();
+		result = result + ",\"aadScore\":" + aadScore + ",\"emsScore\":" + emsScore;
+		result = result + ",\"precision\":" + precision + ",\"recall\":" + recall;
+		result = result + "}";
+		System.out.println(result);
+		writer.print(result);
 	}
 
 	private static void writeXML(HttpServletResponse response, Iterable<RecommendedItem> items) throws IOException {
@@ -213,19 +226,6 @@ public class RecommenderServlet extends HttpServlet {
 			writer.print("</id></item>");
 		}
 		writer.println("</recommendedItems>");
-	}
-
-	private static void writeJSON(HttpServletResponse response, RecommendItemList itemList, double aadScore, double emsScore, double precision, double recall) throws IOException {
-		response.setContentType("text/plain");
-		response.setCharacterEncoding("UTF-8");
-		response.setHeader("Cache-Control", "no-cache");
-		PrintWriter writer = response.getWriter();
-		String result = "{\"sum\":" + itemList.getTotalSum() + ",\"items\":";
-		result = result + itemList.toJSON();
-		result = result + ",\"aadScore\":" + aadScore + ",\"emsScore\":" + emsScore;
-		result = result + ",\"precision\":" + precision + ",\"recall\":" + recall;
-		result = result + "}";
-		writer.print(result);
 	}
 
 	private void writePlainText(HttpServletResponse response, long userID, Iterable<RecommendedItem> items,

@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.apache.mahout.cf.taste.common.Refreshable;
 import org.apache.mahout.cf.taste.common.TasteException;
-import org.apache.mahout.cf.taste.impl.recommender.GenericBooleanPrefItemBasedRecommender;
+import org.apache.mahout.cf.taste.impl.recommender.GenericItemBasedRecommender;
 import org.apache.mahout.cf.taste.model.DataModel;
 import org.apache.mahout.cf.taste.recommender.IDRescorer;
 import org.apache.mahout.cf.taste.recommender.RecommendedItem;
@@ -16,7 +16,7 @@ import org.apache.mahout.common.LongPair;
 public class BaseItemRecommender extends ItemRecommender {
 
 	/* GenericItemBasedRecommender对象 */
-	private final GenericBooleanPrefItemBasedRecommender mItemBasedRecommender; 
+	private final GenericItemBasedRecommender mItemBasedRecommender; 
 	/* 输入参数*/
 	private final DataModel mDataModel;
 	private final ItemSimilarity mItemSimilarity;
@@ -24,10 +24,10 @@ public class BaseItemRecommender extends ItemRecommender {
 	private BaseItemRecommender(Builder builder) {
 		this.mDataModel = builder.mDataModel;
 		this.mItemSimilarity = builder.mItemSimilarity;
-		this.mItemBasedRecommender = new GenericBooleanPrefItemBasedRecommender(mDataModel, mItemSimilarity);
+		this.mItemBasedRecommender = new GenericItemBasedRecommender(mDataModel, mItemSimilarity);
 	}
 	
-	public GenericBooleanPrefItemBasedRecommender getmItemBasedRecommender() {
+	public GenericItemBasedRecommender getmItemBasedRecommender() {
 		return mItemBasedRecommender;
 	}
 

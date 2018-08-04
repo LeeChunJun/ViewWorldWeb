@@ -16,7 +16,7 @@ public class RecommendItemList {
 	}
 
 	public RecommendItemList(List<RecommendedItem> items) {
-		List<String> itemIDList = new ArrayList<String>();
+		List<String> itemIDList = new ArrayList<>();
 		for (RecommendedItem item : items) {
 			itemIDList.add(String.valueOf(item.getItemID()));
 		}

@@ -8,34 +8,24 @@ import com.licj.viewworldweb.utils.StringUtil;
 
 public class Item {
 	public static final String ID = "id";
-	public static final String SONG_NAME = "song_name";
-	public static final String SINGER_NAME = "singer_name";
-	public static final String PIC_URL = "pic_url";
-	public static final String PUBLISH_TIME = "publish_time";
-	public static final String LYRIC = "lyric";
+	public static final String NAME = "name";
+	public static final String PUBLISH_TIME = "published_year";
 	public static final String TAGS = "tags";
 
 	private long id;
-	private String song_name;
-	private String singer_name;
-	private String pic_url;
+	private String name;
 	private String publish_time;
-	private String lyric;
 	private List<String> tags;
 
 	public Item() {
 
 	}
-
-	public Item(long id, String song_name, String singer_name, String pic_url, String publish_time, String lyric,
-			List<String> tags) {
+	
+	public Item(long id, String name, String publish_time, List<String> tags) {
 		super();
 		this.id = id;
-		this.song_name = song_name;
-		this.singer_name = singer_name;
-		this.pic_url = pic_url;
+		this.name = name;
 		this.publish_time = publish_time;
-		this.lyric = lyric;
 		this.tags = tags;
 	}
 
@@ -47,28 +37,12 @@ public class Item {
 		this.id = id;
 	}
 
-	public String getSong_name() {
-		return song_name;
+	public String getName() {
+		return name;
 	}
 
-	public void setSong_name(String song_name) {
-		this.song_name = song_name;
-	}
-
-	public String getSinger_name() {
-		return singer_name;
-	}
-
-	public void setSinger_name(String singer_name) {
-		this.singer_name = singer_name;
-	}
-
-	public String getPic_url() {
-		return pic_url;
-	}
-
-	public void setPic_url(String pic_url) {
-		this.pic_url = pic_url;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getPublish_time() {
@@ -77,14 +51,6 @@ public class Item {
 
 	public void setPublish_time(String publish_time) {
 		this.publish_time = publish_time;
-	}
-
-	public String getLyric() {
-		return lyric;
-	}
-
-	public void setLyric(String lyric) {
-		this.lyric = lyric;
 	}
 
 	public List<String> getTags() {
@@ -113,11 +79,8 @@ public class Item {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("ID: " + id + "  ");
-		sb.append("SONG_NAME: " + song_name + "  ");
-		sb.append("SINGER_NAME: " + singer_name + "  ");
-		sb.append("PIC_URL: " + pic_url + "  ");
+		sb.append("NAME: " + name + "  ");
 		sb.append("PUBLISH_TIME: " + publish_time + "  ");
-		sb.append("LYRIC: " + lyric + "  ");
 		sb.append("TAGS: " + StringUtil.connectString(tags, ", "));
 		return sb.toString();
 	}
@@ -125,11 +88,8 @@ public class Item {
 	public String toJSON() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("{\"" + ID + "\":" + id + ", ");
-		sb.append("\"" + SONG_NAME + "\":\"" + song_name + "\", ");
-		sb.append("\"" + SINGER_NAME + "\":\"" + singer_name + "\", ");
-		sb.append("\"" + PIC_URL + "\":\"" + pic_url + "\", ");
+		sb.append("\"" + NAME + "\":\"" + name + "\", ");
 		sb.append("\"" + PUBLISH_TIME + "\":\"" + publish_time + "\", ");
-//		sb.append("\"" + LYRIC + "\":\"" + lyric + "\", ");
 		sb.append("\"" + TAGS + "\":\"" + StringUtil.connectString(tags, " ") + "\"}");
 		return sb.toString();
 	}

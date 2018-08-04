@@ -8,12 +8,14 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.apache.mahout.cf.taste.impl.similarity.GenericItemSimilarity;
 
 import com.licj.viewworldweb.model.ItemSimilarity;
-import com.licj.viewworldweb.utils.L;
 
 public class ItemSimilarityTable extends BaseDAO {
+	private static final Logger LOGGER = Logger.getLogger(ItemSimilarityTable.class);
+
 	public final static String TABLE_NAME = "item_similarities";
 	public final static String ITEM_ID_1 = "itemID1";
 	public final static String ITEM_ID_2 = "itemID2";
@@ -28,17 +30,17 @@ public class ItemSimilarityTable extends BaseDAO {
 		try (Connection c = getConnection(); Statement s = c.createStatement();) {
 
 			String sql = "select count(*) from " + TABLE_NAME;
-			L.i("sql->" + sql);
+			LOGGER.info("sql->" + sql);
 
 			ResultSet rs = s.executeQuery(sql);
 			while (rs.next()) {
 				total = rs.getInt(1);
 			}
 
-			L.i("total->" + total);
+			LOGGER.info("total->" + total);
 
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LOGGER.error("getTotal() error!", e);
 		}
 		return total;
 	}
@@ -46,7 +48,7 @@ public class ItemSimilarityTable extends BaseDAO {
 	public void add(ItemSimilarity itemSimilarity) {
 
 		String sql = "insert into " + TABLE_NAME + " values(?,?,?)";
-		L.i("sql->" + sql);
+		LOGGER.info("sql->" + sql);
 		try (Connection c = getConnection(); PreparedStatement ps = c.prepareStatement(sql);) {
 
 			ps.setLong(1, itemSimilarity.getItemID1());
@@ -55,7 +57,7 @@ public class ItemSimilarityTable extends BaseDAO {
 
 			ps.execute();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LOGGER.error("add() error!", e);
 		}
 	}
 
@@ -64,11 +66,11 @@ public class ItemSimilarityTable extends BaseDAO {
 
 			String sql = "delete from " + TABLE_NAME + " where " + ITEM_ID_1 + " = " + id1 + " and " + ITEM_ID_2 + " = "
 					+ id2;
-			L.i("sql->" + sql);
+			LOGGER.info("sql->" + sql);
 
 			s.execute(sql);
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LOGGER.error("delete() error!", e);
 		}
 	}
 
@@ -76,7 +78,7 @@ public class ItemSimilarityTable extends BaseDAO {
 
 		String sql = "update " + TABLE_NAME + " set " + ITEM_ID_1 + " =?, " + ITEM_ID_2 + " =?, " + SIMILARITY
 				+ " =? where " + ITEM_ID_1 + " =? and " + ITEM_ID_2 + " =?";
-		L.i("sql->" + sql);
+		LOGGER.info("sql->" + sql);
 		try (Connection c = getConnection(); PreparedStatement ps = c.prepareStatement(sql);) {
 
 			ps.setLong(1, itemSimilarity.getItemID1());
@@ -87,7 +89,7 @@ public class ItemSimilarityTable extends BaseDAO {
 
 			ps.execute();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LOGGER.error("update() error!", e);
 		}
 	}
 
@@ -100,7 +102,7 @@ public class ItemSimilarityTable extends BaseDAO {
 					item2, rel);
 			return similarity;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LOGGER.error("constructItemSimilarityFromResultSet() error!", e);
 		}
 		return null;
 	}
@@ -109,7 +111,7 @@ public class ItemSimilarityTable extends BaseDAO {
 		List<GenericItemSimilarity.ItemItemSimilarity> similarities = new ArrayList<GenericItemSimilarity.ItemItemSimilarity>();
 
 		String sql = "select * from " + TABLE_NAME;
-		L.i("sql->" + sql);
+		LOGGER.info("sql->" + sql);
 		try (Connection c = getConnection(); PreparedStatement ps = c.prepareStatement(sql);) {
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {

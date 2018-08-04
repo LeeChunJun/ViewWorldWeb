@@ -5,7 +5,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class BaseDAO {
-	
+
 	public BaseDAO() {
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
@@ -15,7 +15,7 @@ public class BaseDAO {
 	}
 
 	public Connection getConnection() throws SQLException {
-		return DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/music_all_db?characterEncoding=UTF-8", "root",
+		return DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/recommenderdb?characterEncoding=UTF-8", "root",
 				"destiny");
 	}
 

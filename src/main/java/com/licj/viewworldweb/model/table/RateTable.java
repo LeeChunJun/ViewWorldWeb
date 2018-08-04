@@ -9,12 +9,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import com.licj.viewworldweb.model.Item;
 import com.licj.viewworldweb.model.ItemList;
 import com.licj.viewworldweb.model.Rate;
-import com.licj.viewworldweb.utils.L;
 
 public class RateTable extends BaseDAO {
+	private static final Logger LOGGER = Logger.getLogger(RateTable.class);
 
 	public final static String TABLE_NAME = "rates";
 	public final static String USER_ID_COLUMN = "userID";
@@ -31,17 +33,17 @@ public class RateTable extends BaseDAO {
 		try (Connection c = getConnection(); Statement s = c.createStatement();) {
 
 			String sql = "select count(*) from " + TABLE_NAME;
-			L.i("sql->" + sql);
+			LOGGER.info("sql->" + sql);
 
 			ResultSet rs = s.executeQuery(sql);
 			while (rs.next()) {
 				total = rs.getInt(1);
 			}
 
-			L.i("total->" + total);
+			LOGGER.info("total->" + total);
 
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LOGGER.error("getTotal() error!", e);
 		}
 		return total;
 	}
@@ -50,14 +52,8 @@ public class RateTable extends BaseDAO {
 		try {
 			Item item = new Item();
 			item.setId(rs.getLong(ItemTable.ID_COLUMN));
-			item.setSong_name(rs.getString(ItemTable.SONG_NAME_COLUMN));
-			item.setSinger_name(rs.getString(ItemTable.SINGER_NAME_COLUMN));
-			item.setPic_url(rs.getString(ItemTable.PIC_URL_COLUMN));
+			item.setName(rs.getString(ItemTable.NAME_COLUMN));
 			item.setPublish_time(rs.getString(ItemTable.PUBLISH_TIME_COLUMN));
-			String lyric = rs.getString(ItemTable.LYRIC_COLUMN);
-			if (lyric != null) {
-				item.setLyric(rs.getString(ItemTable.LYRIC_COLUMN));
-			}
 			String tags = rs.getString(ItemTable.TAGS_COLUMN);
 			if (tags != null) {
 				item.setTags(Arrays.asList(tags.split(",")));
@@ -65,14 +61,14 @@ public class RateTable extends BaseDAO {
 			Float score = rs.getFloat(RATING);
 			items.add(item, score);
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LOGGER.error("constructItemsFromResultSet() error!", e);
 		}
 	}
 
 	public void add(Rate rate) {
 
 		String sql = "insert into " + TABLE_NAME + " values(?,?,?,?)";
-		L.i("sql->" + sql);
+		LOGGER.info("sql->" + sql);
 		try (Connection c = getConnection(); PreparedStatement ps = c.prepareStatement(sql);) {
 
 			ps.setLong(1, rate.getUserId());
@@ -82,8 +78,7 @@ public class RateTable extends BaseDAO {
 
 			ps.execute();
 		} catch (SQLException e) {
-			L.e("sql->" + sql);
-			e.printStackTrace();
+			LOGGER.error("add() error!", e);
 		}
 	}
 
@@ -92,12 +87,11 @@ public class RateTable extends BaseDAO {
 
 			String sql = "delete from " + TABLE_NAME + " where " + USER_ID_COLUMN + " = " + userId + " and "
 					+ ITEM_ID_COLUMN + " = " + itemId;
-			L.i("sql->" + sql);
+			LOGGER.info("sql->" + sql);
 
 			s.execute(sql);
 		} catch (SQLException e) {
-			L.e("sql->delete from " + TABLE_NAME);
-			e.printStackTrace();
+			LOGGER.error("delete() error!", e);
 		}
 	}
 
@@ -105,7 +99,7 @@ public class RateTable extends BaseDAO {
 
 		String sql = "update " + TABLE_NAME + " set " + USER_ID_COLUMN + " =?, " + ITEM_ID_COLUMN + " =?, " + RATING
 				+ " =?, " + TIMESTAMP + " =? where " + USER_ID_COLUMN + " =?" + " and " + ITEM_ID_COLUMN + "=?";
-		L.i("sql->" + sql);
+		LOGGER.info("sql->" + sql);
 		try (Connection c = getConnection(); PreparedStatement ps = c.prepareStatement(sql);) {
 
 			ps.setLong(1, rate.getUserId());
@@ -117,7 +111,7 @@ public class RateTable extends BaseDAO {
 
 			ps.execute();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LOGGER.error("update() error!", e);
 		}
 	}
 
@@ -125,7 +119,7 @@ public class RateTable extends BaseDAO {
 
 		String sql = "select * from " + TABLE_NAME + " r, " + ItemTable.TABLE_NAME + " i" + " where " + "r."
 				+ ITEM_ID_COLUMN + " = i." + ItemTable.ID_COLUMN + " and " + "r." + USER_ID_COLUMN + " = " + userID;
-		L.i("sql->" + sql);
+		LOGGER.info("sql->" + sql);
 		ItemList items = new ItemList();
 		try (Connection c = getConnection(); PreparedStatement ps = c.prepareStatement(sql);) {
 			ResultSet rs = ps.executeQuery();
@@ -133,16 +127,17 @@ public class RateTable extends BaseDAO {
 				constructItemsFromResultSet(rs, items);
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LOGGER.error("getItemsByUserID() error!", e);
 		}
 		return items;
 	}
 	
+	@Deprecated
 	public float getAVGPreferByItemID(String itemID){
 		float average = 0.0f;
 		
 		String sql = "select AVG(" + RATING + ") from " + TABLE_NAME + " where " + ITEM_ID_COLUMN + " =?";
-		L.i("sql->" + sql);
+		LOGGER.info("sql->" + sql);
 		try (Connection c = getConnection(); PreparedStatement ps = c.prepareStatement(sql);) {
 			
 			ps.setString(1, itemID);
@@ -151,20 +146,20 @@ public class RateTable extends BaseDAO {
 				average = rs.getFloat(1);
 			}
 
-			L.i("average->" + average);
+			LOGGER.info("average->" + average);
 		} catch (SQLException e) {
-			L.e("sql->" + sql);
-			e.printStackTrace();
+			LOGGER.error("getAVGPreferByItemID() error!", e);
 		}
 		
 		return average;
 	}
 	
+	@Deprecated
 	public int getRatesNumByItemID(String itemID){
 		int num = 0;
 		
 		String sql = "select count(*) from " + TABLE_NAME + " where " + ITEM_ID_COLUMN + " =?";
-		L.i("sql->" + sql);
+		LOGGER.info("sql->" + sql);
 		try (Connection c = getConnection(); PreparedStatement ps = c.prepareStatement(sql);) {
 			
 			ps.setString(1, itemID);
@@ -173,10 +168,9 @@ public class RateTable extends BaseDAO {
 				num = rs.getInt(1);
 			}
 
-			L.i("average->" + num);
+			LOGGER.info("num->" + num);
 		} catch (SQLException e) {
-			L.e("sql->" + sql);
-			e.printStackTrace();
+			LOGGER.error("getRatesNumByItemID() error!", e);
 		}
 		
 		return num;
@@ -186,7 +180,7 @@ public class RateTable extends BaseDAO {
 		boolean hasRated = true;
 		
 		String sql = "select count(*) from rates where userID = '" + userID + "'";
-		L.i("sql->" + sql);
+		LOGGER.info("sql->" + sql);
 		try (Connection c = getConnection(); PreparedStatement ps = c.prepareStatement(sql);) {
 			
 			ResultSet rs = ps.executeQuery();
@@ -197,7 +191,7 @@ public class RateTable extends BaseDAO {
 			}
 
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LOGGER.error("hasRatedByUserID() error!", e);
 		}
 		
 		return hasRated;
@@ -207,7 +201,7 @@ public class RateTable extends BaseDAO {
 		List<Long> items = new ArrayList<>();
 		
 		String sql = "select itemID,count(userID) num from rates group by itemID order by num desc";
-		L.i("sql->" + sql);
+		LOGGER.info("sql->" + sql);
 		try (Connection c = getConnection(); PreparedStatement ps = c.prepareStatement(sql);) {
 			
 			ResultSet rs = ps.executeQuery();
@@ -216,7 +210,7 @@ public class RateTable extends BaseDAO {
 			}
 
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LOGGER.error("getMostRateItems() error!", e);
 		}
 		
 		return items;

@@ -9,10 +9,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import com.licj.viewworldweb.model.User;
 import com.licj.viewworldweb.utils.*;
 
 public class UserTable extends BaseDAO {
+	private static final Logger LOGGER = Logger.getLogger(UserTable.class);
+	
 	public final static String TABLE_NAME = "users";
 	public final static String ID_COLUMN = "id";
 	public final static String NAME_COLUMN = "name";
@@ -30,17 +34,17 @@ public class UserTable extends BaseDAO {
 		try (Connection c = getConnection(); Statement s = c.createStatement();) {
 
 			String sql = "select count(*) from " + TABLE_NAME;
-			L.i("sql->" + sql);
+			LOGGER.info("sql->" + sql);
 
 			ResultSet rs = s.executeQuery(sql);
 			while (rs.next()) {
 				total = rs.getInt(1);
 			}
 
-			L.i("total->" + total);
+			LOGGER.info("total->" + total);
 
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LOGGER.error("getTotal() error!", e);
 		}
 		return total;
 	}
@@ -59,7 +63,7 @@ public class UserTable extends BaseDAO {
 			}
 			return user;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LOGGER.error("constructUserFromResultSet() error!", e);
 		}
 		return null;
 	}
@@ -67,7 +71,7 @@ public class UserTable extends BaseDAO {
 	public void add(User user) {
 
 		String sql = "insert into " + TABLE_NAME + " values(?,?,?,?,?,?)";
-		L.i("sql->" + sql);
+		LOGGER.info("sql->" + sql);
 		try (Connection c = getConnection(); PreparedStatement ps = c.prepareStatement(sql);) {
 			ps.setLong(1, user.getId());
 			ps.setString(2, user.getName());
@@ -77,7 +81,7 @@ public class UserTable extends BaseDAO {
 			ps.setString(6, StringUtil.connectString(user.getTags(), ", "));
 			ps.execute();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LOGGER.error("add() error!", e);
 		}
 	}
 
@@ -85,11 +89,11 @@ public class UserTable extends BaseDAO {
 		try (Connection c = getConnection(); Statement s = c.createStatement();) {
 
 			String sql = "delete from " + TABLE_NAME + " where " + ID_COLUMN + " = " + id;
-			L.i("sql->" + sql);
+			LOGGER.info("sql->" + sql);
 
 			s.execute(sql);
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LOGGER.error("delete() error!", e);
 		}
 	}
 
@@ -98,7 +102,7 @@ public class UserTable extends BaseDAO {
 		String sql = "update " + TABLE_NAME + " set " + ID_COLUMN + " =?, " + NAME_COLUMN + " =?, " + EMAIL_COLUMN
 				+ " =?, " + PASSWORD_COLUMN + " =?, " + PHONE_COLUMN + " =?, " + TAGS_COLUMN + " =? where " + ID_COLUMN
 				+ " =?";
-		L.i("sql->" + sql);
+		LOGGER.info("sql->" + sql);
 		try (Connection c = getConnection(); PreparedStatement ps = c.prepareStatement(sql);) {
 
 			ps.setLong(1, user.getId());
@@ -111,14 +115,14 @@ public class UserTable extends BaseDAO {
 
 			ps.execute();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LOGGER.error("update() error!", e);
 		}
 	}
 
 	public User getUserByID(String userID) {
 
 		String sql = "select * from " + TABLE_NAME + " where " + ID_COLUMN + " = " + userID;
-		L.i("sql->" + sql);
+		LOGGER.info("sql->" + sql);
 		try (Connection c = getConnection(); PreparedStatement ps = c.prepareStatement(sql);) {
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()) {
@@ -126,7 +130,7 @@ public class UserTable extends BaseDAO {
 				return user;
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LOGGER.error("getUserByID() error!", e);
 		}
 		return null;
 	}
@@ -134,7 +138,7 @@ public class UserTable extends BaseDAO {
 	public boolean hasUserByEmail(String email) {
 
 		String sql = "select " + ID_COLUMN + " from " + TABLE_NAME + " where " + EMAIL_COLUMN + " =  '" + email + "'";
-		L.i("sql->" + sql);
+		LOGGER.info("sql->" + sql);
 		try (Connection c = getConnection(); PreparedStatement ps = c.prepareStatement(sql);) {
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()) {
@@ -143,7 +147,7 @@ public class UserTable extends BaseDAO {
 				return false;
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LOGGER.error("hasUserByEmail() error!", e);
 		}
 		return false;
 	}
@@ -151,7 +155,7 @@ public class UserTable extends BaseDAO {
 	public boolean hasUserByPhone(String phone) {
 
 		String sql = "select " + ID_COLUMN + " from " + TABLE_NAME + " where " + PHONE_COLUMN + " =  '" + phone + "'";
-		L.i("sql->" + sql);
+		LOGGER.info("sql->" + sql);
 		try (Connection c = getConnection(); PreparedStatement ps = c.prepareStatement(sql);) {
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()) {
@@ -160,7 +164,7 @@ public class UserTable extends BaseDAO {
 				return false;
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LOGGER.error("hasUserByPhone() error!", e);
 		}
 		return false;
 	}
@@ -174,14 +178,14 @@ public class UserTable extends BaseDAO {
 		} else {
 			sql = "select " + PASSWORD_COLUMN + " from " + TABLE_NAME + " where " + EMAIL_COLUMN + " =  '" + account + "'";
 		}
-		L.i("sql->" + sql);
+		LOGGER.info("sql->" + sql);
 		try (Connection c = getConnection(); PreparedStatement ps = c.prepareStatement(sql);) {
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()) {
 				return rs.getString(PASSWORD_COLUMN);
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LOGGER.error("getPasswordByAccount() error!", e);
 		}
 		return password;
 	}
@@ -195,14 +199,14 @@ public class UserTable extends BaseDAO {
 		} else {
 			sql = "select " + ID_COLUMN + " from " + TABLE_NAME + " where " + EMAIL_COLUMN + " =  '" + account + "'";
 		}
-		L.i("sql->" + sql);
+		LOGGER.info("sql->" + sql);
 		try (Connection c = getConnection(); PreparedStatement ps = c.prepareStatement(sql);) {
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()) {
 				return rs.getString(ID_COLUMN);
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LOGGER.error("getIDByAccount() error!", e);
 		}
 		return userID;
 	}
@@ -210,7 +214,7 @@ public class UserTable extends BaseDAO {
 	public User getUserByEmail(String email) {
 
 		String sql = "select * from " + TABLE_NAME + " where " + EMAIL_COLUMN + " =  '" + email + "'";
-		L.i("sql->" + sql);
+		LOGGER.info("sql->" + sql);
 		try (Connection c = getConnection(); PreparedStatement ps = c.prepareStatement(sql);) {
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()) {
@@ -218,7 +222,7 @@ public class UserTable extends BaseDAO {
 				return user;
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LOGGER.error("getUserByEmail() error!", e);
 		}
 		return null;
 	}
@@ -226,7 +230,7 @@ public class UserTable extends BaseDAO {
 	public User getUserByPhone(String phone) {
 
 		String sql = "select * from " + TABLE_NAME + " where " + PHONE_COLUMN + " =  '" + phone + "'";
-		L.i("sql->" + sql);
+		LOGGER.info("sql->" + sql);
 		try (Connection c = getConnection(); PreparedStatement ps = c.prepareStatement(sql);) {
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()) {
@@ -234,7 +238,7 @@ public class UserTable extends BaseDAO {
 				return user;
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LOGGER.error("getUserByPhone() error!", e);
 		}
 		return null;
 	}
@@ -247,7 +251,7 @@ public class UserTable extends BaseDAO {
 		List<User> users = new ArrayList<>();
 
 		String sql = "select * from " + TABLE_NAME + " order by " + ID_COLUMN + " asc limit ?,? ";
-
+		LOGGER.info("sql->" + sql);
 		try (Connection c = getConnection(); PreparedStatement ps = c.prepareStatement(sql);) {
 
 			ps.setInt(1, start);
@@ -262,7 +266,7 @@ public class UserTable extends BaseDAO {
 				}
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LOGGER.error("list() error!", e);
 		}
 		return users;
 	}

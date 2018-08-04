@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
+
 import com.licj.viewworldweb.model.User;
 import com.licj.viewworldweb.model.table.UserTable;
 
@@ -17,6 +19,8 @@ import com.licj.viewworldweb.model.table.UserTable;
  */
 @WebServlet("/UserServlet")
 public class UserServlet extends HttpServlet {
+	private static final Logger LOGGER = Logger.getLogger(UserServlet.class);
+	
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -48,7 +52,7 @@ public class UserServlet extends HttpServlet {
 			try {
 				writeJSON(response, user);
 			} catch (IOException e) {
-				e.printStackTrace();
+				LOGGER.error("doGet() error!", e);
 			}
 		}
 

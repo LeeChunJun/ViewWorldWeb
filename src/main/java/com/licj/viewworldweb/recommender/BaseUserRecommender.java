@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.apache.mahout.cf.taste.common.Refreshable;
 import org.apache.mahout.cf.taste.common.TasteException;
-import org.apache.mahout.cf.taste.impl.recommender.GenericBooleanPrefUserBasedRecommender;
+import org.apache.mahout.cf.taste.impl.recommender.GenericUserBasedRecommender;
 import org.apache.mahout.cf.taste.model.DataModel;
 import org.apache.mahout.cf.taste.neighborhood.UserNeighborhood;
 import org.apache.mahout.cf.taste.recommender.IDRescorer;
@@ -20,7 +20,7 @@ import com.licj.viewworldweb.model.table.RateTable;
 public class BaseUserRecommender extends ItemRecommender {
 
 	/* GenericUserBasedRecommender对象 */
-	private final GenericBooleanPrefUserBasedRecommender mUserBasedRecommender; 
+	private final GenericUserBasedRecommender mUserBasedRecommender; 
 	/* 输入参数*/
 	private final DataModel mDataModel;
 	private final UserNeighborhood mNeighborhood;
@@ -30,10 +30,10 @@ public class BaseUserRecommender extends ItemRecommender {
 		this.mDataModel = builder.mDataModel;
 		this.mNeighborhood = builder.mNeighborhood;
 		this.mUserSimilarity = builder.mUserSimilarity;
-		this.mUserBasedRecommender = new GenericBooleanPrefUserBasedRecommender(mDataModel, mNeighborhood, mUserSimilarity);
+		this.mUserBasedRecommender = new GenericUserBasedRecommender(mDataModel, mNeighborhood, mUserSimilarity);
 	}
 
-	public GenericBooleanPrefUserBasedRecommender getmUserBasedRecommender() {
+	public GenericUserBasedRecommender getmUserBasedRecommender() {
 		return mUserBasedRecommender;
 	}
 

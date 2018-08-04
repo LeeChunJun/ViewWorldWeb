@@ -7,7 +7,7 @@ public class ItemList {
 	public static final String ITEM = "item";
 	public static final String VALUE = "score";
 	
-	private Map<Item, Float> items = new HashMap<Item, Float>();
+	private Map<Item, Float> items = new HashMap<>();
 	
 	public int size(){
 		return items.size();
