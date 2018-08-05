@@ -11,9 +11,7 @@ import org.apache.mahout.cf.taste.model.DataModel;
 import org.apache.mahout.cf.taste.neighborhood.UserNeighborhood;
 import org.apache.mahout.cf.taste.recommender.IDRescorer;
 import org.apache.mahout.cf.taste.recommender.RecommendedItem;
-import org.apache.mahout.cf.taste.recommender.Rescorer;
 import org.apache.mahout.cf.taste.similarity.UserSimilarity;
-import org.apache.mahout.common.LongPair;
 
 import com.licj.viewworldweb.model.table.RateTable;
 
@@ -78,6 +76,8 @@ public class BaseUserRecommender extends ItemRecommender {
 
 	}
 	
+	// 返回评价最多的Items
+	@Override
 	public List<RecommendedItem> mostHotItems(long itemID, int howMany) {
 		List<RecommendedItem> result = new ArrayList<>();
 		
@@ -123,21 +123,10 @@ public class BaseUserRecommender extends ItemRecommender {
 		return mUserBasedRecommender.recommend(userID, howMany);
 	}
 
-/*	@Override
-	public List<RecommendedItem> recommend(long userID, int howMany, boolean includeKnownItems) throws TasteException {
-		return mUserBasedRecommender.recommend(userID, howMany, includeKnownItems);
-	}*/
-
 	@Override
 	public List<RecommendedItem> recommend(long userID, int howMany, IDRescorer rescorer) throws TasteException {
 		return mUserBasedRecommender.recommend(userID, howMany, rescorer);
 	}
-
-/*	@Override
-	public List<RecommendedItem> recommend(long userID, int howMany, IDRescorer rescorer, boolean includeKnownItems)
-			throws TasteException {
-		return mUserBasedRecommender.recommend(userID, howMany, rescorer, includeKnownItems);
-	}*/
 
 	@Override
 	public void removePreference(long userID, long itemID) throws TasteException {
@@ -149,21 +138,6 @@ public class BaseUserRecommender extends ItemRecommender {
 		mUserBasedRecommender.setPreference(userID, itemID, rating);
 	}
 
-	@Override
-	public UserSimilarity getUserSimilarity() {
-		return mUserBasedRecommender.getSimilarity();
-	}
-
-	@Override
-	public long[] mostSimilarUserIDs(long userID, int howMany) throws TasteException {
-		return mUserBasedRecommender.mostSimilarUserIDs(userID, howMany);
-	}
-
-	@Override
-	public long[] mostSimilarUserIDs(long userID, int howMany, Rescorer<LongPair> rescorer) throws TasteException {
-		return mUserBasedRecommender.mostSimilarUserIDs(userID, howMany, rescorer);
-	}
-	
 	@Override
 	public String toString(){
 		return "UserBasedRecommender[recommender:" + mUserBasedRecommender + "]";

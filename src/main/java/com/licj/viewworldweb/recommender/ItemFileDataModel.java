@@ -13,7 +13,7 @@ public class ItemFileDataModel implements ItemDataModel{
 	public File modelFile = null;
 	
 	public ItemFileDataModel(){
-		modelFile = new File("D:/12-licj/eclipse-workspace/ViewWorldWeb/src/main/java/resource/rate.csv");
+		modelFile = new File("D:/12-licj/eclipse-workspace/ViewWorldWeb/src/main/java/resource/ratings.csv");
 	}
 	
 	public DataModel getFileDataModel() {

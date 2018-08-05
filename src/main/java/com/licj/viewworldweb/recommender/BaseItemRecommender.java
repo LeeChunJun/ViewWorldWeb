@@ -1,5 +1,6 @@
 package com.licj.viewworldweb.recommender;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -9,15 +10,15 @@ import org.apache.mahout.cf.taste.impl.recommender.GenericItemBasedRecommender;
 import org.apache.mahout.cf.taste.model.DataModel;
 import org.apache.mahout.cf.taste.recommender.IDRescorer;
 import org.apache.mahout.cf.taste.recommender.RecommendedItem;
-import org.apache.mahout.cf.taste.recommender.Rescorer;
 import org.apache.mahout.cf.taste.similarity.ItemSimilarity;
-import org.apache.mahout.common.LongPair;
+
+import com.licj.viewworldweb.model.table.ItemTable;
 
 public class BaseItemRecommender extends ItemRecommender {
 
 	/* GenericItemBasedRecommender对象 */
-	private final GenericItemBasedRecommender mItemBasedRecommender; 
-	/* 输入参数*/
+	private final GenericItemBasedRecommender mItemBasedRecommender;
+	/* 输入参数 */
 	private final DataModel mDataModel;
 	private final ItemSimilarity mItemSimilarity;
 
@@ -26,7 +27,7 @@ public class BaseItemRecommender extends ItemRecommender {
 		this.mItemSimilarity = builder.mItemSimilarity;
 		this.mItemBasedRecommender = new GenericItemBasedRecommender(mDataModel, mItemSimilarity);
 	}
-	
+
 	public GenericItemBasedRecommender getmItemBasedRecommender() {
 		return mItemBasedRecommender;
 	}
@@ -62,9 +63,33 @@ public class BaseItemRecommender extends ItemRecommender {
 
 	}
 
+	// 返回最相似的items
+	@Override
+	public List<RecommendedItem> mostSimilarItems(long itemID, int howMany) throws TasteException {
+		List<RecommendedItem> result = new ArrayList<>();
+
+		List<Long> items = new ItemTable().getMostSimilarItems(String.valueOf(itemID));
+		for (int i = 0; i < howMany; i++) {
+			long id = items.get(i);
+			result.add(new RecommendedItem() {
+
+				@Override
+				public float getValue() {
+					return 5.0f;
+				}
+
+				@Override
+				public long getItemID() {
+					return id;
+				}
+			});
+		}
+
+		return result;
+	}
+
 	/* 业务操作 */
-	
-	
+
 	@Override
 	public void refresh(Collection<Refreshable> alreadyRefreshed) {
 		mItemBasedRecommender.refresh(alreadyRefreshed);
@@ -85,21 +110,10 @@ public class BaseItemRecommender extends ItemRecommender {
 		return mItemBasedRecommender.recommend(userID, howMany);
 	}
 
-/*	@Override
-	public List<RecommendedItem> recommend(long userID, int howMany, boolean includeKnownItems) throws TasteException {
-		return mItemBasedRecommender.recommend(userID, howMany, includeKnownItems);
-	}*/
-
 	@Override
 	public List<RecommendedItem> recommend(long userID, int howMany, IDRescorer rescorer) throws TasteException {
 		return mItemBasedRecommender.recommend(userID, howMany, rescorer);
 	}
-
-/*	@Override
-	public List<RecommendedItem> recommend(long userID, int howMany, IDRescorer rescorer, boolean includeKnownItems)
-			throws TasteException {
-		return mItemBasedRecommender.recommend(userID, howMany, rescorer, includeKnownItems);
-	}*/
 
 	@Override
 	public void removePreference(long userID, long itemID) throws TasteException {
@@ -108,57 +122,12 @@ public class BaseItemRecommender extends ItemRecommender {
 
 	@Override
 	public void setPreference(long userID, long itemID, float rating) throws TasteException {
-		mItemBasedRecommender.setPreference(userID, itemID, rating);		
-	}
-	
-	@Override
-	public ItemSimilarity getItemSimilarity() {
-		return mItemBasedRecommender.getSimilarity();
+		mItemBasedRecommender.setPreference(userID, itemID, rating);
 	}
 
 	@Override
-	public List<RecommendedItem> mostSimilarItems(long itemID, int howMany) throws TasteException {
-		return mItemBasedRecommender.mostSimilarItems(itemID, howMany);
-	}
-
-	@Override
-	public List<RecommendedItem> mostSimilarItems(long itemID, int howMany, Rescorer<LongPair> rescorer)
-			throws TasteException {
-		return mItemBasedRecommender.mostSimilarItems(itemID, howMany, rescorer);
-	}
-
-	@Override
-	public List<RecommendedItem> mostSimilarItems(long[] itemIDs, int howMany) throws TasteException {
-		return mItemBasedRecommender.mostSimilarItems(itemIDs, howMany);
-	}
-
-	@Override
-	public List<RecommendedItem> mostSimilarItems(long[] itemIDs, int howMany, Rescorer<LongPair> rescorer)
-			throws TasteException {
-		return mItemBasedRecommender.mostSimilarItems(itemIDs, howMany, rescorer);
-	}
-
-	@Override
-	public List<RecommendedItem> mostSimilarItems(long[] itemIDs, int howMany, boolean excludeItemIfNotSimilarToAll)
-			throws TasteException {
-		return mItemBasedRecommender.mostSimilarItems(itemIDs, howMany, excludeItemIfNotSimilarToAll);
-	}
-
-	@Override
-	public List<RecommendedItem> mostSimilarItems(long[] itemIDs, int howMany, Rescorer<LongPair> rescorer,
-			boolean excludeItemIfNotSimilarToAll) throws TasteException {
-		return mItemBasedRecommender.mostSimilarItems(itemIDs, howMany, rescorer, excludeItemIfNotSimilarToAll);
-	}
-
-	@Override
-	public List<RecommendedItem> recommendedBecause(long userID, long itemID, int howMany) throws TasteException {
-		return mItemBasedRecommender.recommendedBecause(userID, itemID, howMany);
-	}
-	
-	@Override
-	public String toString(){
+	public String toString() {
 		return "ItemBasedRecommender[recommender:" + mItemBasedRecommender + "]";
 	}
-	
 
 }

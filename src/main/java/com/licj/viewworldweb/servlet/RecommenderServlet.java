@@ -36,7 +36,9 @@ public class RecommenderServlet extends HttpServlet {
 	private static final Logger LOGGER = Logger.getLogger(RecommenderServlet.class);
 	private static final long serialVersionUID = 1L;
 
-	private static final int DEFAULT_HOW_MANY = 10;
+	private static final int DEFAULT_HOW_MANY = 16;
+	private static final String DEFAULT_FORMAT = "json";
+	private static final String DEFAULT_EVALUATOR = "no";
 	private static final String DEFAULT_RECOMMENDER = Parameters.UserBased_REC;
 
 	private ItemRecommender recommender;
@@ -49,8 +51,7 @@ public class RecommenderServlet extends HttpServlet {
 		super();
 	}
 
-	private void initItemRecommender(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException {
+	private void initItemRecommender(HttpServletRequest request, HttpServletResponse response) throws ServletException {
 		recommenderFactory = new RecommenderFactory(request);
 		String recommenderTypeString = request.getParameter(Parameters.RECOMMENDER_TYPE);
 		recommender = recommenderTypeString == null ? recommenderFactory.getItemRecommender(DEFAULT_RECOMMENDER)
@@ -64,16 +65,15 @@ public class RecommenderServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
 	 *      response)
 	 */
-	@SuppressWarnings("unused")
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		
+
 		/*
 		 * 1.设定选择的推荐器类型 2.不同的推荐器需要的不同参数设定 3.评估推荐结果的好坏，精确度和范围指标
 		 */
 		initItemRecommender(request, response);
-		/* userID*/
+		/* userID */
 		String userIDString = request.getParameter(Parameters.USER_ID);
 		if (userIDString == null) {
 			throw new ServletException("userID was not specified");
@@ -91,7 +91,12 @@ public class RecommenderServlet extends HttpServlet {
 		/* format */
 		String format = request.getParameter(Parameters.FORMAT);
 		if (format == null) {
-			format = "json";
+			format = DEFAULT_FORMAT;
+		}
+		/* evaluator */
+		String evaluator = request.getParameter(Parameters.EVALUATOR);
+		if (evaluator == null) {
+			evaluator = DEFAULT_EVALUATOR;
 		}
 
 		List<RecommendedItem> items = null;
@@ -100,12 +105,12 @@ public class RecommenderServlet extends HttpServlet {
 		RecommenderBuilder recommenderBuilder = null;
 		double aadScore = 0.0;// 绝对平均差误差（越小越好）
 		double emsScore = 0.0;// 均方根误差（越小越好）
-		
+
 		RecommenderIRStatsEvaluator irStatsEvaluator = null;
 		IRStatistics stats = null;
 		double precision = 0.0;// 查准率
 		double recall = 0.0;// 查全率
-		
+
 		try {
 			// evaluator recommender to get score.
 			adEvaluator = new AverageAbsoluteDifferenceRecommenderEvaluator();
@@ -114,67 +119,64 @@ public class RecommenderServlet extends HttpServlet {
 
 			// fetch List<RecommendedItem>
 			if (recommender instanceof BaseUserRecommender) {
-				if(!new RateTable().hasRatedByUserID(String.valueOf(userID))){
+				if (!new RateTable().hasRatedByUserID(String.valueOf(userID))) {
 					items = recommender.mostHotItems(itemID, howMany);
 				} else {
 					items = recommender.recommend(userID, howMany);
 				}
-				
+
 				// evaluator recommender
-/*				recommenderBuilder = new RecommenderBuilder() {
-					@Override
-					public Recommender buildRecommender(DataModel dataModel) throws TasteException {
-						UserSimilarity similarity = new PearsonCorrelationSimilarity(dataModel);
-						UserNeighborhood neighborhood = new NearestNUserNeighborhood(12, similarity, dataModel);
-						return new GenericUserBasedRecommender(dataModel, neighborhood, similarity);
-					}
-				};
-				// Use 80% of the data to train; test using the other 20%.
-				// 1.0 -> controls how much of the overall input data is used.
-				aadScore = adEvaluator.evaluate(recommenderBuilder, null, ((BaseUserRecommender) recommender).getmDataModel(), 0.8, 0.2);
-				emsScore = emsEvaluator.evaluate(recommenderBuilder, null, ((BaseUserRecommender) recommender).getmDataModel(), 0.8, 0.2);
-				stats = irStatsEvaluator.evaluate(recommenderBuilder, null, ((BaseUserRecommender) recommender).getmDataModel(), null, 12,
-						GenericRecommenderIRStatsEvaluator.CHOOSE_THRESHOLD, 0.2);
-				precision = stats.getPrecision();
-				recall = stats.getRecall();
-*/
+				if ("yes".equals(evaluator)) {
+					recommenderBuilder = recommenderFactory.getRecommenderBuilder(true);
+					// Use 80% of the data to train; test using the other 20%.
+					// 1.0 -> controls how much of the overall input data is used.
+					aadScore = adEvaluator.evaluate(recommenderBuilder, null,
+							((BaseUserRecommender) recommender).getmDataModel(), 0.8, 0.2);
+					emsScore = emsEvaluator.evaluate(recommenderBuilder, null,
+							((BaseUserRecommender) recommender).getmDataModel(), 0.8, 0.2);
+					stats = irStatsEvaluator.evaluate(recommenderBuilder, null,
+							((BaseUserRecommender) recommender).getmDataModel(), null, howMany,
+							GenericRecommenderIRStatsEvaluator.CHOOSE_THRESHOLD, 0.2);
+					precision = stats.getPrecision();
+					recall = stats.getRecall();
+				}
+
 			} else if (recommender instanceof BaseItemRecommender) {
 
-				if(!new RateTable().hasRatedByUserID(String.valueOf(userID))){
+				if (!new RateTable().hasRatedByUserID(String.valueOf(userID))) {
 					/* 最相似项目 */
-					items = recommender.mostHotItems(itemID, howMany);
+					items = recommender.mostSimilarItems(itemID, howMany);
 				} else {
 					/* 推荐项目 */
 					items = recommender.recommend(userID, howMany);
 				}
-				
+
 				// evaluator recommender
-/*				recommenderBuilder = new RecommenderBuilder() {
-					@Override
-					public Recommender buildRecommender(DataModel dataModel) throws TasteException {
-						ItemSimilarity similarity = new PearsonCorrelationSimilarity(dataModel);
-						return new GenericItemBasedRecommender(dataModel, similarity);
-					}
-				};
-				// Use 80% of the data to train; test using the other 20%.
-				// 1.0 -> controls how much of the overall input data is used.
-				aadScore = adEvaluator.evaluate(recommenderBuilder, null, ((BaseItemRecommender) recommender).getmDataModel(), 0.8, 0.2);
-				emsScore = emsEvaluator.evaluate(recommenderBuilder, null, ((BaseItemRecommender) recommender).getmDataModel(), 0.8, 0.2);
-				stats = irStatsEvaluator.evaluate(recommenderBuilder, null, ((BaseItemRecommender) recommender).getmDataModel(), null, 12,
-						GenericRecommenderIRStatsEvaluator.CHOOSE_THRESHOLD, 0.2);
-				precision = stats.getPrecision();
-				recall = stats.getRecall();
-*/
+				if ("yes".equals(evaluator)) {
+					recommenderBuilder = recommenderFactory.getRecommenderBuilder(false);
+					// Use 80% of the data to train; test using the other 20%.
+					// 1.0 -> controls how much of the overall input data is used.
+					aadScore = adEvaluator.evaluate(recommenderBuilder, null,
+							((BaseItemRecommender) recommender).getmDataModel(), 0.8, 0.2);
+					emsScore = emsEvaluator.evaluate(recommenderBuilder, null,
+							((BaseItemRecommender) recommender).getmDataModel(), 0.8, 0.2);
+					stats = irStatsEvaluator.evaluate(recommenderBuilder, null,
+							((BaseItemRecommender) recommender).getmDataModel(), null, howMany,
+							GenericRecommenderIRStatsEvaluator.CHOOSE_THRESHOLD, 0.2);
+					precision = stats.getPrecision();
+					recall = stats.getRecall();
+				}
+
 			}
-			
+			LOGGER.info("items.size()->" + items.size());
 			RecommendItemList itemList = new RecommendItemList(items);
-			
-			if ("text".equals(format)) {
-				writePlainText(response, userID, items, itemList);
+
+			if ("json".equals(format)) {
+				writeJSON(response, itemList, aadScore, emsScore, precision, recall);
 			} else if ("xml".equals(format)) {
 				writeXML(response, items);
-			} else if ("json".equals(format)) {
-				writeJSON(response, itemList, aadScore, emsScore, precision, recall);
+			} else if ("text".equals(format)) {
+				writePlainText(response, userID, items, itemList);
 			} else {
 				throw new ServletException("Bad format parameter: " + format);
 			}
@@ -198,7 +200,8 @@ public class RecommenderServlet extends HttpServlet {
 		doGet(request, response);
 	}
 
-	private static void writeJSON(HttpServletResponse response, RecommendItemList itemList, double aadScore, double emsScore, double precision, double recall) throws IOException {
+	private void writeJSON(HttpServletResponse response, RecommendItemList itemList, double aadScore,
+			double emsScore, double precision, double recall) throws IOException {
 		response.setContentType("application/json");
 		response.setCharacterEncoding("UTF-8");
 		response.setHeader("Cache-Control", "no-cache");
@@ -208,11 +211,11 @@ public class RecommenderServlet extends HttpServlet {
 		result = result + ",\"aadScore\":" + aadScore + ",\"emsScore\":" + emsScore;
 		result = result + ",\"precision\":" + precision + ",\"recall\":" + recall;
 		result = result + "}";
-		System.out.println(result);
+		LOGGER.info("JSON Response->" + result);
 		writer.print(result);
 	}
 
-	private static void writeXML(HttpServletResponse response, Iterable<RecommendedItem> items) throws IOException {
+	private void writeXML(HttpServletResponse response, Iterable<RecommendedItem> items) throws IOException {
 		response.setContentType("text/plain");
 		response.setCharacterEncoding("UTF-8");
 		response.setHeader("Cache-Control", "no-cache");
@@ -237,7 +240,7 @@ public class RecommenderServlet extends HttpServlet {
 		writeRecommendations(itemList, writer);
 	}
 
-	private static void writeRecommendations(RecommendItemList itemList, PrintWriter writer) {
+	private void writeRecommendations(RecommendItemList itemList, PrintWriter writer) {
 		for (RecommendItem recommendedItem : itemList.getRecommendItems()) {
 			writer.println(recommendedItem.toString());
 		}

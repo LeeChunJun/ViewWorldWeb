@@ -4,15 +4,20 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.apache.mahout.cf.taste.common.TasteException;
+import org.apache.mahout.cf.taste.eval.RecommenderBuilder;
 import org.apache.mahout.cf.taste.impl.neighborhood.NearestNUserNeighborhood;
-import org.apache.mahout.cf.taste.impl.similarity.LogLikelihoodSimilarity;
+import org.apache.mahout.cf.taste.impl.recommender.GenericItemBasedRecommender;
+import org.apache.mahout.cf.taste.impl.recommender.GenericUserBasedRecommender;
+import org.apache.mahout.cf.taste.impl.similarity.PearsonCorrelationSimilarity;
 import org.apache.mahout.cf.taste.model.DataModel;
 import org.apache.mahout.cf.taste.neighborhood.UserNeighborhood;
+import org.apache.mahout.cf.taste.recommender.Recommender;
 import org.apache.mahout.cf.taste.similarity.ItemSimilarity;
 import org.apache.mahout.cf.taste.similarity.UserSimilarity;
 
 import com.licj.viewworldweb.recommender.BaseItemRecommender;
 import com.licj.viewworldweb.recommender.BaseUserRecommender;
+import com.licj.viewworldweb.recommender.ItemFileDataModel;
 import com.licj.viewworldweb.recommender.ItemJDBCDataModel;
 import com.licj.viewworldweb.recommender.ItemRecommender;
 
@@ -20,6 +25,10 @@ public class RecommenderFactory {
 	private static final Logger LOGGER = Logger.getLogger(RecommenderFactory.class);
 	private HttpServletRequest request;
 
+	public RecommenderFactory() {
+		
+	}
+	
 	public RecommenderFactory(HttpServletRequest request) {
 		this.request = request;
 	}
@@ -52,7 +61,7 @@ public class RecommenderFactory {
 		String thresholdString = request.getParameter(Parameters.Threshold);
 
 		if (similarityString == null && neighborhoodString == null) {
-			similarity = new LogLikelihoodSimilarity(dataModel);
+			similarity = new PearsonCorrelationSimilarity(dataModel);
 			neighborhood = new NearestNUserNeighborhood(12, similarity, dataModel);
 			recommender = new BaseUserRecommender.Builder().dataModel(dataModel).userNeighborhood(neighborhood)
 					.userSimilarity(similarity).build();
@@ -63,8 +72,8 @@ public class RecommenderFactory {
 
 	@SuppressWarnings("unused")
 	public ItemRecommender getBaseItemRecommender(HttpServletRequest request) throws TasteException {
-		DataModel dataModel = new ItemJDBCDataModel().getDataModel();
-//		DataModel dataModel = new ItemFileDataModel().getDataModel();
+//		DataModel dataModel = new ItemJDBCDataModel().getDataModel();
+		DataModel dataModel = new ItemFileDataModel().getDataModel();
 		ItemSimilarity similarity = null;
 		ItemRecommender recommender = null;
 
@@ -72,11 +81,38 @@ public class RecommenderFactory {
 		String weightedString = request.getParameter(Parameters.IS_WEIGHTED);
 
 		if (similarityString == null) {
-			similarity = new LogLikelihoodSimilarity(dataModel);
+			similarity = new PearsonCorrelationSimilarity(dataModel);
 			recommender = new BaseItemRecommender.Builder().dataModel(dataModel).itemSimilarity(similarity).build();
 		}
 
 		return recommender;
 	}
-
+	
+	// 设定模型评价值的RecommenderBuilder
+	public RecommenderBuilder getRecommenderBuilder(boolean baseUserRecommender) {
+		RecommenderBuilder recommenderBuilder = null;
+		if(baseUserRecommender) {
+			recommenderBuilder = new RecommenderBuilder() {
+				@Override
+				public Recommender buildRecommender(DataModel dataModel) throws TasteException {
+					UserSimilarity similarity = new PearsonCorrelationSimilarity(dataModel);
+					UserNeighborhood neighborhood = new NearestNUserNeighborhood(12, similarity, dataModel);
+					return new GenericUserBasedRecommender(dataModel, neighborhood, similarity);
+				}
+			
+			};
+			
+		} else {
+			recommenderBuilder = new RecommenderBuilder() {
+				@Override
+				public Recommender buildRecommender(DataModel dataModel) throws TasteException {
+					ItemSimilarity similarity = new PearsonCorrelationSimilarity(dataModel);
+					return new GenericItemBasedRecommender(dataModel, similarity);
+				}
+			};
+			
+		}
+		return recommenderBuilder;
+	}
+	
 }

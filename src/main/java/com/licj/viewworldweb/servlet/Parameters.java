@@ -7,8 +7,11 @@ public class Parameters {
 	public static final String USER_ID = "userID";//(require)
 	public static final String ITEM_ID = "itemID";
 	
-	public static final String COUNT = "count";//(option->10)
+	public static final String COUNT = "count";//(option->12)
 	public static final String FORMAT = "format";//(option->text)
+	public static final String EVALUATOR = "evaluator";//(option->text)
+	
+	public static final String REQUESTID = "requestID";//(option->text)
 	
 	/**
 	 * Abstract-{}:聚焦实现具体功能函数的抽象类

@@ -8,9 +8,12 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 
@@ -244,6 +247,38 @@ public class ItemTable extends BaseDAO {
 			LOGGER.error("listByAttr() error!", e);
 		}
 		return items;
+	}
+
+	public List<Long> getMostSimilarItems(String itemID) {
+		// 1、获取与当前传入item中的tag有关联的itemIDs
+		List<String> items = new ArrayList<>();
+		String sql = "select id from items where tags in (select tags from items where id = '" + itemID + "')";
+		LOGGER.info("sql->" + sql);
+		try (Connection c = getConnection(); PreparedStatement ps = c.prepareStatement(sql);) {
+
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				items.add(String.valueOf(rs.getLong(1)));
+			}
+
+		} catch (SQLException e) {
+			LOGGER.error("getMostSimilarItems() error!", e);
+		}
+		// 2、根据itemIDs找到items
+		List<Item> itemAlls = getItems(items);
+		// 3、获取当前传入itemID的item
+		Item currentItem = get(Long.parseLong(itemID));
+		// 4、比较两个item的相似度
+		Map<Long, Double> mapAlls = new HashMap<>();
+		itemAlls.stream().forEach(item -> {
+			mapAlls.put(item.getId(), currentItem.relevance(item));
+		});
+		Map<Long, Double> result = mapAlls.entrySet().stream()
+				.sorted(Map.Entry.comparingByValue(Comparator.reverseOrder())).collect(Collectors.toMap(
+						Map.Entry::getKey, Map.Entry::getValue, (oldValue, newValue) -> oldValue, LinkedHashMap::new));
+
+		List<Long> resultList = new ArrayList<>(result.keySet());
+		return resultList;
 	}
 
 }

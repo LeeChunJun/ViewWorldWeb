@@ -8,107 +8,72 @@ import org.apache.mahout.cf.taste.common.TasteException;
 import org.apache.mahout.cf.taste.model.DataModel;
 import org.apache.mahout.cf.taste.recommender.IDRescorer;
 import org.apache.mahout.cf.taste.recommender.RecommendedItem;
-import org.apache.mahout.cf.taste.recommender.Rescorer;
-import org.apache.mahout.cf.taste.similarity.ItemSimilarity;
-import org.apache.mahout.cf.taste.similarity.UserSimilarity;
-import org.apache.mahout.common.LongPair;
+import org.apache.mahout.cf.taste.recommender.Recommender;
 
-public abstract class ItemRecommender {
+public class ItemRecommender implements Recommender {
 
-	/* Recommender API(9) */
-
-	public void refresh(Collection<Refreshable> alreadyRefreshed) {
-	}
-
-	public float estimatePreference(long userID, long itemID) throws TasteException {
-		return 0;
-	}
-
-	public DataModel getDataModel() {
-		return null;
-	}
-
+	/* Recommender API */
+	@Override
 	public List<RecommendedItem> recommend(long userID, int howMany) throws TasteException {
 		return null;
 	}
 
-	public List<RecommendedItem> recommend(long userID, int howMany, boolean includeKnownItems) throws TasteException {
-		return null;
-	}
-
+	@Override
 	public List<RecommendedItem> recommend(long userID, int howMany, IDRescorer rescorer) throws TasteException {
 		return null;
 	}
 
-	public List<RecommendedItem> recommend(long userID, int howMany, IDRescorer rescorer, boolean includeKnownItems)
-			throws TasteException {
-		return null;
+	@Override
+	public float estimatePreference(long userID, long itemID) throws TasteException {
+		return 0;
 	}
 
+	@Override
 	public void removePreference(long userID, long itemID) throws TasteException {
+
 	}
 
+	@Override
 	public void setPreference(long userID, long itemID, float rating) throws TasteException {
+
 	}
 
-	/* UserBasedRecommender API(4) */
-	
-	public List<RecommendedItem> mostHotItems(long itemID, int howMany) {
-		return null;
-	}
-
-	public UserSimilarity getUserSimilarity() {
-		return null;
-	}
-
-	public long[] mostSimilarUserIDs(long userID, int howMany) throws TasteException {
-		return null;
-	}
-
-	public long[] mostSimilarUserIDs(long userID, int howMany, Rescorer<LongPair> rescorer) throws TasteException {
+	@Override
+	public DataModel getDataModel() {
 		return null;
 	}
 
 	@Override
-	public String toString() {
+	public void refresh(Collection<Refreshable> alreadyRefreshed) {
+
+	}
+
+	/* UserBasedRecommender API */
+
+	/**
+	 * 返回评价最多的Items
+	 * 
+	 * @param itemID
+	 * @param howMany
+	 * @return
+	 */
+
+	public List<RecommendedItem> mostHotItems(long itemID, int howMany) {
 		return null;
 	}
 
 	/* ItemBasedRecommender API(8) */
 
-	public ItemSimilarity getItemSimilarity() {
-		return null;
-	}
+	/**
+	 * 返回最相似的items
+	 * 
+	 * @param itemID
+	 * @param howMany
+	 * @return
+	 * @throws TasteException
+	 */
 
 	public List<RecommendedItem> mostSimilarItems(long itemID, int howMany) throws TasteException {
-		return null;
-	}
-
-	public List<RecommendedItem> mostSimilarItems(long itemID, int howMany, Rescorer<LongPair> rescorer)
-			throws TasteException {
-		return null;
-	}
-
-	public List<RecommendedItem> mostSimilarItems(long[] itemIDs, int howMany) throws TasteException {
-		return null;
-	}
-
-	public List<RecommendedItem> mostSimilarItems(long[] itemIDs, int howMany, Rescorer<LongPair> rescorer)
-			throws TasteException {
-		return null;
-	}
-
-	public List<RecommendedItem> mostSimilarItems(long[] itemIDs, int howMany, boolean excludeItemIfNotSimilarToAll)
-			throws TasteException {
-		return null;
-	}
-
-	public List<RecommendedItem> mostSimilarItems(long[] itemIDs, int howMany, Rescorer<LongPair> rescorer,
-			boolean excludeItemIfNotSimilarToAll) throws TasteException {
-		return null;
-	}
-
-	public List<RecommendedItem> recommendedBecause(long userID, long itemID, int howMany) throws TasteException {
 		return null;
 	}
 

@@ -9,8 +9,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
-
 import com.licj.viewworldweb.model.Item;
 import com.licj.viewworldweb.model.table.ItemTable;
 
@@ -19,7 +17,6 @@ import com.licj.viewworldweb.model.table.ItemTable;
  */
 @WebServlet("/IndexItemListServlet")
 public class IndexItemListServlet extends HttpServlet {
-	private static final Logger LOGGER = Logger.getLogger(IndexItemListServlet.class);
 	private static final long serialVersionUID = 1L;
        
     /**
@@ -44,12 +41,10 @@ public class IndexItemListServlet extends HttpServlet {
         int total;
         /* 取得查询关键字 */
         String queryString = request.getParameter("query");
-        try {
-            start = Integer.parseInt(request.getParameter("start"));
-        } catch (NumberFormatException e) {
-            // 当浏览器没有传参数start时
-        	LOGGER.error("doGet() error!", e);
-        }
+        String startStr = request.getParameter("start");
+    	if(startStr != null) {
+    		start = Integer.parseInt(startStr);
+    	}
         
         int next = start + count;
         int pre = start - count;

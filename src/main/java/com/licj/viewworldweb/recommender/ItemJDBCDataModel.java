@@ -16,7 +16,7 @@ public class ItemJDBCDataModel implements ItemDataModel{
 	//驱动程序名
 	public final static String driver = "com.mysql.jdbc.Driver";
     //URL指向要访问的数据库名mydata
-	public final static String url = "jdbc:mysql://localhost:3306/music_all_db";
+	public final static String url = "jdbc:mysql://localhost:3306/recommenderdb";
     //MySQL配置时的用户名
 	public final static String user = "root";
     //MySQL配置时的密码
