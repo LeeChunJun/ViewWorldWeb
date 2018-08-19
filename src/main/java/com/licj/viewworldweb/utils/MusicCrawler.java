@@ -12,8 +12,7 @@ import java.util.stream.Collectors;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 
 import com.google.common.base.Charsets;
 import com.google.gson.Gson;
@@ -21,7 +20,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 public class MusicCrawler {
-	private static final Logger logger = LoggerFactory.getLogger(MusicCrawler.class);
+	private static final Logger logger = Logger.getLogger(MusicCrawler.class);
 
 	public static final String StoreDir = "D:/12-licj/eclipse-workspace/ViewWorldWeb/src/main/java/resource/";
 	public static final String BaseUrl = "http://music.163.com";
