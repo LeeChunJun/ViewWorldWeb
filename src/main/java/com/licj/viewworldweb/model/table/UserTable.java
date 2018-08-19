@@ -250,7 +250,7 @@ public class UserTable extends BaseDAO {
 	public List<User> list(int start, int count) {
 		List<User> users = new ArrayList<>();
 
-		String sql = "select * from " + TABLE_NAME + " order by " + ID_COLUMN + " asc limit ?,? ";
+		String sql = "select * from " + TABLE_NAME + " limit ?,? ";
 		LOGGER.info("sql->" + sql);
 		try (Connection c = getConnection(); PreparedStatement ps = c.prepareStatement(sql);) {
 

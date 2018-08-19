@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 
+import com.licj.viewworldweb.utils.MusicCrawler;
+import com.licj.viewworldweb.utils.MusicFetcher;
 import com.licj.viewworldweb.utils.RecommenderIntro;
 
 /**
@@ -40,26 +42,25 @@ public class RecommenderData extends HttpServlet {
 
 		switch (requestId) {
 		case "fetchData":
-
+			String[] args1 = new String[] {};
+			MusicCrawler.main(args1);
+			writeJSON(response, "MusicCrawler Response Content");
 			break;
 		case "writeData":
-
+			String[] args2 = new String[] {};
+			MusicFetcher.main(args2);
+			writeJSON(response, "MusicFetcher Response Content");
 			break;
 		case "analysData":
-			try {
-				RecommenderIntro re = new RecommenderIntro();
-				String[] args = new String[] {};
-				re.entry(args);
-				writeJSON(response, "RecommenderIntro Response Content");
-			} catch (Exception e) {
-				LOGGER.error("analysData error", e);
-			}
+			String[] args3 = new String[] {};
+			RecommenderIntro.main(args3);
+			writeJSON(response, "RecommenderIntro Response Content");
 			break;
 		default:
 			break;
 		}
 	}
-	
+
 	private void writeJSON(HttpServletResponse response, String content) throws IOException {
 		response.setContentType("application/json");
 		response.setCharacterEncoding("UTF-8");

@@ -203,7 +203,7 @@ public class ItemTable extends BaseDAO {
 	public List<Item> list(int start, int count) {
 		List<Item> items = new ArrayList<>();
 
-		String sql = "select * from " + TABLE_NAME + " order by " + ID_COLUMN + " asc limit ?,? ";
+		String sql = "select * from " + TABLE_NAME + " limit ?,? ";
 		LOGGER.info("sql->" + sql);
 		try (Connection c = getConnection(); PreparedStatement ps = c.prepareStatement(sql);) {
 
@@ -228,7 +228,7 @@ public class ItemTable extends BaseDAO {
 		List<Item> items = new ArrayList<>();
 
 		String sql = "select * from " + TABLE_NAME + " where " + NAME_COLUMN + " like '%" + attr + "%' or "
-				+ TAGS_COLUMN + " like '%" + attr + "%' order by " + ID_COLUMN + " asc limit ?,? ";
+				+ TAGS_COLUMN + " like '%" + attr + "%' limit ?,? ";
 		LOGGER.info("sql->" + sql);
 		try (Connection c = getConnection(); PreparedStatement ps = c.prepareStatement(sql);) {
 

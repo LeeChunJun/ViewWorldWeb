@@ -11,9 +11,13 @@ import java.util.*;
 
 public class RecommenderIntro {
 
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) {
 		RecommenderIntro recommenderIntro = new RecommenderIntro();
-		recommenderIntro.entry(args);
+		try {
+			recommenderIntro.entry(args);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void entry(String[] args) throws Exception {
