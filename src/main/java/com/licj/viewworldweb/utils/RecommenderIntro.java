@@ -25,7 +25,7 @@ public class RecommenderIntro {
 		if (args.length > 0)
 			modelFile = new File(args[0]);
 		if (modelFile == null || !modelFile.exists())
-			modelFile = new File("D:/12-licj/eclipse-workspace/ViewWorldWeb/src/main/java/resource/ratings.csv");
+			modelFile = new File("D:/12-licj/eclipse-workspace/ViewWorldWeb/src/main/java/resource/neteasy_rates.csv");
 //		if (!modelFile.exists()) {
 //			System.err.println("Please, specify name of file, or put file 'input.csv' into current directory!");
 //			System.exit(1);
@@ -40,8 +40,9 @@ public class RecommenderIntro {
 		ItemSimilarity similarity = new PearsonCorrelationSimilarity(model);
 		Recommender recommender = new GenericItemBasedRecommender(model, similarity);
 		
-		List<RecommendedItem> recommendations = recommender.recommend(102, 130);// 对于用户12，推荐12个项目
+		List<RecommendedItem> recommendations = recommender.recommend(64048001, 16);// 对于用户12，推荐12个项目
 
+		System.out.println(recommendations.size());
 		for (RecommendedItem recommendation : recommendations) {
 			System.out.println(recommendation);
 		}

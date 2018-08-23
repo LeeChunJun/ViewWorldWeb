@@ -148,7 +148,6 @@ public class RecommenderServlet extends HttpServlet {
 					items = recommender.mostSimilarItems(itemID, howMany);
 				} else {
 					/* 推荐项目 */
-					System.out.println("hhhhhhhhhhhhhhhhh");
 					items = recommender.recommend(userID, howMany);
 				}
 
