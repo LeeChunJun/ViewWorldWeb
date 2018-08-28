@@ -109,11 +109,6 @@ public class BaseUserRecommender extends ItemRecommender {
 	}
 
 	@Override
-	public float estimatePreference(long userID, long itemID) throws TasteException {
-		return mUserBasedRecommender.estimatePreference(userID, itemID);
-	}
-
-	@Override
 	public DataModel getDataModel() {
 		return mUserBasedRecommender.getDataModel();
 	}
@@ -126,6 +121,11 @@ public class BaseUserRecommender extends ItemRecommender {
 	@Override
 	public List<RecommendedItem> recommend(long userID, int howMany, IDRescorer rescorer) throws TasteException {
 		return mUserBasedRecommender.recommend(userID, howMany, rescorer);
+	}
+	
+	@Override
+	public float estimatePreference(long userID, long itemID) throws TasteException {
+		return mUserBasedRecommender.estimatePreference(userID, itemID);
 	}
 
 	@Override

@@ -18,7 +18,6 @@ import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -98,6 +97,8 @@ public class MusicFetcher {
 			phone = "1827083" + index;
 		} else if (index >= 10000 && index < 100000) {
 			phone = "182708" + index;
+		} else if (index >= 100000 && index < 1000000) {
+			phone = "18270" + index;
 		}
 		return phone;
 	}
@@ -151,7 +152,12 @@ public class MusicFetcher {
 				rate.setItemId(song.getSongUrl().split("=")[1]);
 				rate.setUserId(playDetailList.getPlayList().getUsrUrl().split("=")[1]);
 				rate.setTimestamp(dateToStamp(playDetailList.getPubDate()));
-				rate.setPreference(playDetailList.getFarvirate());
+				rate.setPreference(getCalculatePreference(
+						playDetailList.getFarvirate(),
+						playDetailList.getShare(),
+						playDetailList.getComment(),
+						playDetailList.getPlayCount(),
+						playDetailList.getPlaylistTrackCount()));
 				return rate;
 			}).collect(Collectors.toList());
 
@@ -160,15 +166,29 @@ public class MusicFetcher {
 		List<Rate> returnList = result.parallel().filter(distinctByKey(b -> b.getUserId() + b.getItemId()))
 				.collect(Collectors.toList());
 
-		Float maxValue = Float
-				.parseFloat(returnList.stream().min(Comparator.comparing(Rate::getPreference)).get().getPreference());
-		returnList = returnList.parallelStream().map(rate -> {
-			rate.setPreference(String.valueOf((Float.parseFloat(rate.getPreference()) / maxValue) * 5.0));
-			return rate;
-		}).collect(Collectors.toList());
+//		Float maxValue = Float
+//				.parseFloat(returnList.stream().min(Comparator.comparing(Rate::getPreference)).get().getPreference());
+//		returnList = returnList.parallelStream().map(rate -> {
+//			rate.setPreference(String.valueOf((Float.parseFloat(rate.getPreference()) / maxValue) * 5.0));
+//			return rate;
+//		}).collect(Collectors.toList());
 
 		rate2CSV(returnList);
 		rate2DB(returnList);
+	}
+
+	public static String getCalculatePreference(String farvirate, String share, String comment, String playCount,
+			String playlistTrackCount) {
+		
+		if(farvirate == null || share == null || comment == null) {
+			return "1.0";
+		}
+		// farvirate -> 5 * num; share -> 3 * num; comment -> 1 * num;
+		float result = (Float.parseFloat(farvirate) * 5 + Float.parseFloat(share) * 3 + Float.parseFloat(comment) * 1) /
+				(Float.parseFloat(farvirate) + Float.parseFloat(share) + Float.parseFloat(comment));
+
+		String preference = String.valueOf(result);
+		return preference;
 	}
 
 	public static String dateToStamp(String s) {

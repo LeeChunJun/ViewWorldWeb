@@ -1,5 +1,7 @@
 package com.licj.viewworldweb.utils;
 
+import org.apache.log4j.Logger;
+import org.apache.mahout.cf.taste.impl.common.LongPrimitiveIterator;
 import org.apache.mahout.cf.taste.impl.model.file.*;
 import org.apache.mahout.cf.taste.impl.recommender.*;
 import org.apache.mahout.cf.taste.impl.similarity.*;
@@ -10,42 +12,54 @@ import java.io.*;
 import java.util.*;
 
 public class RecommenderIntro {
+	public final static Logger logger = Logger.getLogger(RecommenderIntro.class);
+	
+	public final static int NEIGHBORHOOD_NUM = 2;// define neighborhood num
+    public final static int RECOMMEND_NUM = 3;// define recommend num
 
 	public static void main(String[] args) {
 		RecommenderIntro recommenderIntro = new RecommenderIntro();
 		try {
 			recommenderIntro.entry(args);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("RecommenderIntro error!!!", e);
 		}
 	}
 
 	public void entry(String[] args) throws Exception {
 		File modelFile = null;
-		if (args.length > 0)
-			modelFile = new File(args[0]);
-		if (modelFile == null || !modelFile.exists())
-			modelFile = new File("D:/12-licj/eclipse-workspace/ViewWorldWeb/src/main/java/resource/neteasy_rates.csv");
-//		if (!modelFile.exists()) {
-//			System.err.println("Please, specify name of file, or put file 'input.csv' into current directory!");
-//			System.exit(1);
-//		}
-		
-		DataModel model = new FileDataModel(modelFile);// 加载数据文件
+//        String dataDir = RecommenderIntro.class.getClassLoader().getResource("").getPath();
+		String dataDir = "D:/12-licj/eclipse-workspace/ViewWorldWeb/src/main/java/";
+        if (args.length > 0)
+            modelFile = new File(args[0]);
+        if (modelFile == null || !modelFile.exists())
+            modelFile = new File(dataDir + "resource/neteasy_rates.csv");
+        if (!modelFile.exists()) {
+            System.err.println("Please, specify name of file, or put file 'resource/neteasy_rate.csv' into current directory!");
+            System.exit(1);
+        }
+
+        DataModel model = new FileDataModel(modelFile);
 
 //		UserSimilarity similarity = new PearsonCorrelationSimilarity(model);
-//		UserNeighborhood neighborhood = new NearestNUserNeighborhood(12, similarity, model);
+//		UserNeighborhood neighborhood = new NearestNUserNeighborhood(NEIGHBORHOOD_NUM, similarity, model);
 //		Recommender recommender = new GenericUserBasedRecommender(model, neighborhood, similarity);// 创建推荐引擎
 
-		ItemSimilarity similarity = new PearsonCorrelationSimilarity(model);
+		ItemSimilarity similarity = new EuclideanDistanceSimilarity(model);
 		Recommender recommender = new GenericItemBasedRecommender(model, similarity);
-		
-		List<RecommendedItem> recommendations = recommender.recommend(64048001, 16);// 对于用户12，推荐12个项目
 
-		System.out.println(recommendations.size());
-		for (RecommendedItem recommendation : recommendations) {
-			System.out.println(recommendation);
-		}
+		LongPrimitiveIterator iter = model.getUserIDs();
+		int index = 12;
+        while (iter.hasNext()&& index > 0) {
+            long uid = iter.nextLong();
+            List<RecommendedItem> list = recommender.recommend(uid, RECOMMEND_NUM);
+            System.out.printf("uid:%s", uid);
+            for (RecommendedItem ritem : list) {
+                System.out.printf("(%s,%f)", ritem.getItemID(), ritem.getValue());
+            }
+            System.out.println();
+            index--;
+        }
 
 	}
 

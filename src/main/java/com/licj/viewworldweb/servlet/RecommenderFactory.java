@@ -8,7 +8,7 @@ import org.apache.mahout.cf.taste.eval.RecommenderBuilder;
 import org.apache.mahout.cf.taste.impl.neighborhood.NearestNUserNeighborhood;
 import org.apache.mahout.cf.taste.impl.recommender.GenericItemBasedRecommender;
 import org.apache.mahout.cf.taste.impl.recommender.GenericUserBasedRecommender;
-import org.apache.mahout.cf.taste.impl.similarity.PearsonCorrelationSimilarity;
+import org.apache.mahout.cf.taste.impl.similarity.*;
 import org.apache.mahout.cf.taste.model.DataModel;
 import org.apache.mahout.cf.taste.neighborhood.UserNeighborhood;
 import org.apache.mahout.cf.taste.recommender.Recommender;
@@ -24,6 +24,8 @@ import com.licj.viewworldweb.recommender.ItemRecommender;
 public class RecommenderFactory {
 	private static final Logger LOGGER = Logger.getLogger(RecommenderFactory.class);
 	private HttpServletRequest request;
+	
+	public final static int NEIGHBORHOOD_NUM = 12;// define neighborhood num
 
 	public RecommenderFactory() {
 		
@@ -61,8 +63,8 @@ public class RecommenderFactory {
 		String thresholdString = request.getParameter(Parameters.Threshold);
 
 		if (similarityString == null && neighborhoodString == null) {
-			similarity = new PearsonCorrelationSimilarity(dataModel);
-			neighborhood = new NearestNUserNeighborhood(12, similarity, dataModel);
+			similarity = new EuclideanDistanceSimilarity(dataModel);
+			neighborhood = new NearestNUserNeighborhood(NEIGHBORHOOD_NUM, similarity, dataModel);
 			recommender = new BaseUserRecommender.Builder().dataModel(dataModel).userNeighborhood(neighborhood)
 					.userSimilarity(similarity).build();
 		}
@@ -81,7 +83,7 @@ public class RecommenderFactory {
 		String weightedString = request.getParameter(Parameters.IS_WEIGHTED);
 
 		if (similarityString == null) {
-			similarity = new PearsonCorrelationSimilarity(dataModel);
+			similarity = new EuclideanDistanceSimilarity(dataModel);
 			recommender = new BaseItemRecommender.Builder().dataModel(dataModel).itemSimilarity(similarity).build();
 		}
 
@@ -95,8 +97,8 @@ public class RecommenderFactory {
 			recommenderBuilder = new RecommenderBuilder() {
 				@Override
 				public Recommender buildRecommender(DataModel dataModel) throws TasteException {
-					UserSimilarity similarity = new PearsonCorrelationSimilarity(dataModel);
-					UserNeighborhood neighborhood = new NearestNUserNeighborhood(12, similarity, dataModel);
+					UserSimilarity similarity = new EuclideanDistanceSimilarity(dataModel);
+					UserNeighborhood neighborhood = new NearestNUserNeighborhood(NEIGHBORHOOD_NUM, similarity, dataModel);
 					return new GenericUserBasedRecommender(dataModel, neighborhood, similarity);
 				}
 			
@@ -106,7 +108,7 @@ public class RecommenderFactory {
 			recommenderBuilder = new RecommenderBuilder() {
 				@Override
 				public Recommender buildRecommender(DataModel dataModel) throws TasteException {
-					ItemSimilarity similarity = new PearsonCorrelationSimilarity(dataModel);
+					ItemSimilarity similarity = new EuclideanDistanceSimilarity(dataModel);
 					return new GenericItemBasedRecommender(dataModel, similarity);
 				}
 			};

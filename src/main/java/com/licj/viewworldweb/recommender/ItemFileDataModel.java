@@ -13,7 +13,9 @@ public class ItemFileDataModel implements ItemDataModel{
 	public File modelFile = null;
 	
 	public ItemFileDataModel(){
-		modelFile = new File("D:/12-licj/eclipse-workspace/ViewWorldWeb/src/main/java/resource/neteasy_rates.csv");
+//		String dataDir = ItemFileDataModel.class.getClassLoader().getResource("").getPath();
+		String dataDir = "D:/12-licj/eclipse-workspace/ViewWorldWeb/src/main/java/";
+		modelFile = new File(dataDir + "resource/neteasy_rates.csv");
 	}
 	
 	public DataModel getFileDataModel() {

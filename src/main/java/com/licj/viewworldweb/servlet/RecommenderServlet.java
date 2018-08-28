@@ -120,9 +120,14 @@ public class RecommenderServlet extends HttpServlet {
 			// fetch List<RecommendedItem>
 			if (recommender instanceof BaseUserRecommender) {
 				if (!new RateTable().hasRatedByUserID(String.valueOf(userID))) {
+					/* 被评价最多的项目 */
 					items = recommender.mostHotItems(itemID, howMany);
 				} else {
+					/* 推荐项目 */
 					items = recommender.recommend(userID, howMany);
+					if(items.size() == 0) {
+						items = recommender.mostHotItems(itemID, howMany);
+					}
 				}
 
 				// evaluator recommender
@@ -149,6 +154,9 @@ public class RecommenderServlet extends HttpServlet {
 				} else {
 					/* 推荐项目 */
 					items = recommender.recommend(userID, howMany);
+					if(items.size() == 0) {
+						items = recommender.mostSimilarItems(itemID, howMany);
+					}
 				}
 
 				// evaluator recommender

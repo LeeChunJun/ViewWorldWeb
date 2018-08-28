@@ -23,6 +23,7 @@ public class MusicCrawler {
 	private static final Logger logger = Logger.getLogger(MusicCrawler.class);
 
 	public static final String StoreDir = "D:/12-licj/eclipse-workspace/ViewWorldWeb/src/main/java/resource/";
+	
 	public static final String BaseUrl = "http://music.163.com";
 	public static final String ThemePageUrl = "http://music.163.com/discover/playlist";
 
@@ -52,7 +53,7 @@ public class MusicCrawler {
 		int[] progress = { 1, 1 };
 		themeList.parallelStream().forEach(theme -> {
 			// 获取每一种主题下面的播放歌单列表
-			musicCrawler.fetchPlayList(theme, PlayListOrderHot, 2, 0);
+			musicCrawler.fetchPlayList(theme, PlayListOrderHot, 12, 2);
 			System.out.println(progress[0]++ + "|theme|" + theme.getDataCat() + "------>finish!");
 		});
 		pList.parallelStream().forEach(playList -> {
