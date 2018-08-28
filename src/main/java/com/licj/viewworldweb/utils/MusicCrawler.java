@@ -62,7 +62,7 @@ public class MusicCrawler {
 		});
 		Gson gson = new Gson();
 		// 保存最后的结果
-		try (OutputStream outStream = new FileOutputStream(StoreDir + "pDetailList1.json", false);
+		try (OutputStream outStream = new FileOutputStream(StoreDir + "pDetailList.json", false);
 				Writer outWriter = new BufferedWriter(new OutputStreamWriter(outStream, Charsets.UTF_8));) {
 			outWriter.write(gson.toJson(pDetailList));
 		} catch (IOException e) {
