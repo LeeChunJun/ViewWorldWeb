@@ -20,7 +20,7 @@ public class ItemJDBCDataModel implements ItemDataModel{
     //MySQL配置时的用户名
 	public final static String user = "root";
     //MySQL配置时的密码
-	public final static String password = "destiny";
+	public final static String password = "root";
 
 	public BasicDataSource dataSource = new BasicDataSource();
 	public JDBCDataModel dataModel = null;

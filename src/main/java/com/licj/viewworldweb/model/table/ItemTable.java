@@ -15,13 +15,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.licj.viewworldweb.model.Item;
 import com.licj.viewworldweb.utils.StringUtil;
 
 public class ItemTable extends BaseDAO {
-	private static final Logger LOGGER = Logger.getLogger(ItemTable.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ItemTable.class);
 
 	public static final String TABLE_NAME = "items";
 	public static final String ID_COLUMN = "id";

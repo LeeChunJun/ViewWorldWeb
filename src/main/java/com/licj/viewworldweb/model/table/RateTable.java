@@ -9,14 +9,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.licj.viewworldweb.model.Item;
 import com.licj.viewworldweb.model.ItemList;
 import com.licj.viewworldweb.model.Rate;
 
 public class RateTable extends BaseDAO {
-	private static final Logger LOGGER = Logger.getLogger(RateTable.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(RateTable.class);
 
 	public final static String TABLE_NAME = "rates";
 	public final static String USER_ID_COLUMN = "userID";

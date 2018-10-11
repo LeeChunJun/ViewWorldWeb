@@ -2,7 +2,8 @@ package com.licj.viewworldweb.servlet;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.mahout.cf.taste.common.TasteException;
 import org.apache.mahout.cf.taste.eval.RecommenderBuilder;
 import org.apache.mahout.cf.taste.impl.neighborhood.NearestNUserNeighborhood;
@@ -22,7 +23,7 @@ import com.licj.viewworldweb.recommender.ItemJDBCDataModel;
 import com.licj.viewworldweb.recommender.ItemRecommender;
 
 public class RecommenderFactory {
-	private static final Logger LOGGER = Logger.getLogger(RecommenderFactory.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(RecommenderFactory.class);
 	private HttpServletRequest request;
 	
 	public final static int NEIGHBORHOOD_NUM = 12;// define neighborhood num

@@ -3,18 +3,19 @@ package com.licj.viewworldweb.recommender;
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.mahout.cf.taste.impl.model.file.FileDataModel;
 import org.apache.mahout.cf.taste.model.DataModel;
 
 public class ItemFileDataModel implements ItemDataModel{
-	private static final Logger LOGGER = Logger.getLogger(ItemFileDataModel.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ItemFileDataModel.class);
 	
 	public File modelFile = null;
 	
 	public ItemFileDataModel(){
 //		String dataDir = ItemFileDataModel.class.getClassLoader().getResource("").getPath();
-		String dataDir = "D:/12-licj/eclipse-workspace/ViewWorldWeb/src/main/java/";
+		String dataDir = "D:/AppsData/2/eclipse-workspace/ViewWorldWeb/src/main/java/";
 		modelFile = new File(dataDir + "resource/neteasy_rates.csv");
 	}
 	

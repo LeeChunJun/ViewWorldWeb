@@ -32,7 +32,7 @@ public class EvaluatorIntro {
 
 		File modelFile = null;
 //        String dataDir = EvaluatorIntro.class.getClassLoader().getResource("").getPath();
-		String dataDir = "D:/12-licj/eclipse-workspace/ViewWorldWeb/src/main/java/";
+		String dataDir = "D:/AppsData/2/eclipse-workspace/ViewWorldWeb/src/main/java/";
         if (args.length > 0)
             modelFile = new File(args[0]);
         if (modelFile == null || !modelFile.exists())

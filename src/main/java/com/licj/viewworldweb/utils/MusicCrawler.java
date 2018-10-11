@@ -12,7 +12,8 @@ import java.util.stream.Collectors;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Charsets;
 import com.google.gson.Gson;
@@ -20,9 +21,9 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 public class MusicCrawler {
-	private static final Logger logger = Logger.getLogger(MusicCrawler.class);
+	private static final Logger logger = LoggerFactory.getLogger(MusicCrawler.class);
 
-	public static final String StoreDir = "D:/12-licj/eclipse-workspace/ViewWorldWeb/src/main/java/resource/";
+	public static final String StoreDir = "D:/AppsData/2/eclipse-workspace/ViewWorldWeb/src/main/java/resource/";
 	
 	public static final String BaseUrl = "http://music.163.com";
 	public static final String ThemePageUrl = "http://music.163.com/discover/playlist";
@@ -52,8 +53,11 @@ public class MusicCrawler {
 		musicCrawler.fetchTheme();
 		int[] progress = { 1, 1 };
 		themeList.parallelStream().forEach(theme -> {
-			// 获取每一种主题下面的播放歌单列表
-			musicCrawler.fetchPlayList(theme, PlayListOrderHot, 12, 2);
+			// 获取每一种主题下面的播放歌单列表,themesPages为每种主题的翻页数
+			Integer themesPages = 1;
+			for(int i = 0; i < themesPages; i++) {
+				musicCrawler.fetchPlayList(theme, PlayListOrderHot, 12, i);
+			}
 			System.out.println(progress[0]++ + "|theme|" + theme.getDataCat() + "------>finish!");
 		});
 		pList.parallelStream().forEach(playList -> {
@@ -124,7 +128,7 @@ public class MusicCrawler {
 					.map(w -> BaseUrl + w.attr("href")).collect(Collectors.toList());
 			List<String> list6 = document.select("span[class=nb]").stream().map(w -> w.text())
 					.collect(Collectors.toList());
-			for (int i = 0; i < limit; i++) {
+			for (int i = 0; i < list1.size(); i++) {
 				PlayList playList = new PlayList();
 				playList.setCoverImgUrl(list1.get(i));
 				playList.setListName(list2.get(i));

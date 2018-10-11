@@ -9,7 +9,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.licj.viewworldweb.utils.MusicCrawler;
 import com.licj.viewworldweb.utils.MusicFetcher;
@@ -20,7 +21,7 @@ import com.licj.viewworldweb.utils.RecommenderIntro;
  */
 @WebServlet("/RecommenderData")
 public class RecommenderData extends HttpServlet {
-	private static final Logger LOGGER = Logger.getLogger(RecommenderData.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(RecommenderData.class);
 	private static final long serialVersionUID = 1L;
 
 	/**

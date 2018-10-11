@@ -9,13 +9,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.licj.viewworldweb.model.User;
 import com.licj.viewworldweb.utils.*;
 
 public class UserTable extends BaseDAO {
-	private static final Logger LOGGER = Logger.getLogger(UserTable.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(UserTable.class);
 	
 	public final static String TABLE_NAME = "users";
 	public final static String ID_COLUMN = "id";

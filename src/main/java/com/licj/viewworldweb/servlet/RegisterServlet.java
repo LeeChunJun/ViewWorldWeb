@@ -13,7 +13,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.json.JSONObject;
 
 import com.licj.viewworldweb.model.User;
@@ -24,7 +25,7 @@ import com.licj.viewworldweb.model.table.UserTable;
  */
 @WebServlet("/RegisterServlet")
 public class RegisterServlet extends HttpServlet {
-	private static final Logger LOGGER = Logger.getLogger(RegisterServlet.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(RegisterServlet.class);
 	
 	private static final long serialVersionUID = 1L;
 

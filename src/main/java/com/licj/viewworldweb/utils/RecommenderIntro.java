@@ -1,6 +1,5 @@
 package com.licj.viewworldweb.utils;
 
-import org.apache.log4j.Logger;
 import org.apache.mahout.cf.taste.impl.common.LongPrimitiveIterator;
 import org.apache.mahout.cf.taste.impl.model.file.*;
 import org.apache.mahout.cf.taste.impl.recommender.*;
@@ -11,8 +10,11 @@ import org.apache.mahout.cf.taste.similarity.*;
 import java.io.*;
 import java.util.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class RecommenderIntro {
-	public final static Logger logger = Logger.getLogger(RecommenderIntro.class);
+	public final static Logger logger = LoggerFactory.getLogger(RecommenderIntro.class);
 	
 	public final static int NEIGHBORHOOD_NUM = 2;// define neighborhood num
     public final static int RECOMMEND_NUM = 3;// define recommend num
@@ -29,7 +31,7 @@ public class RecommenderIntro {
 	public void entry(String[] args) throws Exception {
 		File modelFile = null;
 //        String dataDir = RecommenderIntro.class.getClassLoader().getResource("").getPath();
-		String dataDir = "D:/12-licj/eclipse-workspace/ViewWorldWeb/src/main/java/";
+		String dataDir = "D:/AppsData/2/eclipse-workspace/ViewWorldWeb/src/main/java/";
         if (args.length > 0)
             modelFile = new File(args[0]);
         if (modelFile == null || !modelFile.exists())

@@ -37,7 +37,7 @@ import com.licj.viewworldweb.utils.MusicCrawler.PlayDetailList;
 public class MusicFetcher {
 	private static final Logger logger = Logger.getLogger(MusicFetcher.class);
 
-	public static final String StoreDir = "D:/12-licj/eclipse-workspace/ViewWorldWeb/src/main/java/resource/";
+	public static final String StoreDir = "D:/AppsData/2/eclipse-workspace/ViewWorldWeb/src/main/java/resource/";
 
 	public static void main(String[] args) {
 		MusicFetcher musicFetcher = new MusicFetcher();
@@ -316,7 +316,7 @@ public class MusicFetcher {
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 			conn = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/neteasydb?characterEncoding=UTF-8", "root",
-					"destiny");
+					"root");
 		} catch (ClassNotFoundException e) {
 			logger.error("ClassNotFoundException!!!", e);
 		} catch (SQLException e) {

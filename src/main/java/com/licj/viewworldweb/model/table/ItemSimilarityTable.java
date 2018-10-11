@@ -8,13 +8,14 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.apache.mahout.cf.taste.impl.similarity.GenericItemSimilarity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.licj.viewworldweb.model.ItemSimilarity;
 
 public class ItemSimilarityTable extends BaseDAO {
-	private static final Logger LOGGER = Logger.getLogger(ItemSimilarityTable.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ItemSimilarityTable.class);
 
 	public final static String TABLE_NAME = "item_similarities";
 	public final static String ITEM_ID_1 = "itemID1";
