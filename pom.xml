@@ -14,6 +14,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<mahout.version>0.6</mahout.version>
+		<mahout.groupid>org.apache.mahout</mahout.groupid>
 	</properties>
 
 	<dependencies>
@@ -71,7 +72,7 @@
 		</dependency>
 		<!-- mahout -->
 		<dependency>
-			<groupId>org.apache.mahout</groupId>
+			<groupId>${mahout.groupid}</groupId>
 			<artifactId>mahout-core</artifactId>
 			<version>${mahout.version}</version>
 			<exclusions>
@@ -83,7 +84,7 @@
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.apache.mahout/mahout-math -->
 		<dependency>
-			<groupId>org.apache.mahout</groupId>
+			<groupId>${mahout.groupid}</groupId>
 			<artifactId>mahout-math</artifactId>
 			<version>${mahout.version}</version>
 			<exclusions>
@@ -94,7 +95,7 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.mahout</groupId>
+			<groupId>${mahout.groupid}</groupId>
 			<artifactId>mahout-integration</artifactId>
 			<version>${mahout.version}</version>
 			<exclusions>
